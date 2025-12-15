@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ColorPicker?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<fx:root fx:id="Pestaña" prefHeight="257.0" prefWidth="364.0" text="Hito: " type="TitledPane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+                     <content>
+                          <AnchorPane prefHeight="274.0" prefWidth="376.0">
+                              <children>
+                                  <TextField fx:id="NomHit" layoutX="14.0" layoutY="14.0" onAction="#OnActionTitulo" prefHeight="26.0" prefWidth="119.0" promptText="Titulo" />
+                                  <TextField fx:id="Fecha" layoutX="144.0" layoutY="14.0" onAction="#OnActionFecha" onKeyPressed="#OnFechaKeyPress" onKeyReleased="#OnFechaChanged" prefHeight="26.0" prefWidth="67.0" promptText="Fecha" />
+                                  <TextArea fx:id="Dato" layoutX="14.0" layoutY="86.0" prefHeight="168.0" prefWidth="270.0" wrapText="true" />
+                                  <ColorPicker fx:id="Color" layoutX="14.0" layoutY="50.0" prefHeight="26.0" prefWidth="85.0" />
+                                  <Separator layoutX="14.0" layoutY="258.0" prefHeight="11.0" prefWidth="289.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                              <ComboBox fx:id="Dependencias" layoutX="103.0" layoutY="51.0" onAction="#onActionComboBox" onMouseClicked="#setDependecias" prefHeight="26.0" prefWidth="178.0" />
+                              <Button layoutX="297.0" layoutY="15.0" mnemonicParsing="false" onAction="#eliminar" text="Eliminar" />
+                              <CheckBox fx:id="AC" layoutX="297.0" layoutY="54.0" mnemonicParsing="false" onAction="#OnActionAC" text="A.C." />
+                              </children>
+                          </AnchorPane>
+                     </content>
+</fx:root>

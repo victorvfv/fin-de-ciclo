@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.TextFlow?>
+
+<ScrollPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="561.0" prefWidth="623.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.app_lin_tem.Componentes.Controller.VistaPeriodoController">
+   <content>
+      <FlowPane alignment="CENTER" columnHalignment="CENTER" prefHeight="672.0" prefWidth="607.0">
+         <children>
+            <Label fx:id="Titulo" alignment="CENTER" contentDisplay="TOP" prefHeight="80.0" prefWidth="571.0" text="Primera Guerra mundial 1939-1945" textAlignment="CENTER" underline="true" wrapText="true">
+               <font>
+                  <Font size="21.0" />
+               </font>
+            </Label>
+            <Label fx:id="Data" prefWidth="576.0" text="La Primera Guerra Mundial[nota 3]​ (28 de julio de 1914-11 de noviembre de 1918), también conocida como la Gran Guerra,[nota 3]​ fue un conflicto mundial entre dos coaliciones: los Aliados (o Entente) y las Potencias Centrales. Los combates tuvieron lugar principalmente en Europa y Oriente Medio, así como en partes de África y Asia-Pacífico. En Europa los combates se caracterizaron por la guerra de trincheras, el uso generalizado de artillería, ametralladoras, armas químicas (gas) y la introducción de tanques y aviones. La Primera Guerra Mundial fue uno de los conflictos más mortíferos de la historia, con un saldo de unos 10 millones de muertos militares y más de 20 millones de heridos, además de unos 10 millones de muertos civiles por causas que incluían el genocidio. El movimiento de grandes cantidades de personas fue un factor importante en la mortal pandemia de gripe española." textAlignment="JUSTIFY" wrapText="true">
+               <font>
+                  <Font name="Arial" size="14.0" />
+               </font>
+            </Label>
+            <Separator opacity="0.0" prefHeight="23.0" prefWidth="599.0" />
+            <ImageView fx:id="Imagen" fitHeight="176.0" fitWidth="400.0" pickOnBounds="true">
+               <image>
+                  <Image url="@../../../../../../../../../../Downloads/330px-Bloqueo_de_Venezuela_por_las_potencias_europeas_1902.jpg" />
+               </image>
+            </ImageView>
+            <Separator opacity="0.0" prefHeight="23.0" prefWidth="599.0" />
+            <FlowPane prefHeight="200.0" prefWidth="576.0">
+               <children>
+                  <Label text="Periodos dependientes" underline="true">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+                  <Label text="Hitos dependientes" underline="true">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                     <FlowPane.margin>
+                        <Insets left="200.0" />
+                     </FlowPane.margin>
+                  </Label>
+                  <TextFlow fx:id="Periodos" prefHeight="200.0" prefWidth="200.0" />
+                  <TextFlow fx:id="Hitos" prefHeight="200.0" prefWidth="200.0">
+                     <FlowPane.margin>
+                        <Insets left="150.0" />
+                     </FlowPane.margin>
+                  </TextFlow>
+               </children>
+            </FlowPane>
+         </children>
+      </FlowPane>
+   </content>
+</ScrollPane>

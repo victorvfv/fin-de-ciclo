@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Rectangle?>
+
+<fx:root fx:id="base" onMouseClicked="#onCLick" onMouseEntered="#Ratondentro" onMouseExited="#Ratonfuera" prefHeight="48.0" prefWidth="500.0" type="AnchorPane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <Rectangle fx:id="linea" arcHeight="5.0" arcWidth="5.0" fill="#0084ff" height="58.0" layoutX="124.0" layoutY="55.0" opacity="0.5" stroke="BLACK" strokeType="INSIDE" width="500.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+        <Label fx:id="titulo" alignment="CENTER" prefHeight="58.0" prefWidth="500.0" text="Label" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+        <Label fx:id="fch2" alignment="CENTER_RIGHT" prefHeight="46.0" prefWidth="53.0" text="Label" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="6.0" AnchorPane.topAnchor="0.0" />
+        <Label fx:id="fch1" layoutY="6.0" prefHeight="46.0" prefWidth="53.0" text="Label" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="6.0" AnchorPane.topAnchor="0.0">
+            <opaqueInsets>
+                <Insets />
+            </opaqueInsets>
+        </Label>
+    </children>
+</fx:root>
