@@ -245,6 +245,51 @@ public class MainViewController {
             periodo.setAlturaMax();
 
         }
+        for(Periodo periodo:periodosCalcular){
+            int iter=0;
+            ArrayList<Periodo> periodosCoincidentes = new ArrayList<>();
+            boolean colisiona=false;
+            while(periodosCalcular.size()!=iter){
+                if(periodo!=periodosCalcular.get(iter)){
+                    int f1o=periodo.getFecha1();
+                    int f2o=periodo.getFecha2();
+
+                    int f1p=periodosCalcular.get(iter).getFecha1();
+                    int f2p=periodosCalcular.get(iter).getFecha2();
+
+                    if((((f1p<=f1o)&(f1p<f2o))|((f2p<f1o)&(f2p<=f2o)))){
+                        periodosCoincidentes.add(periodosCalcular.get(iter));
+                        colisiona=true;
+                    }
+                }
+                iter++;
+
+            }
+            boolean hueco=true;
+            for(Periodo altura:periodosCoincidentes){
+                if((altura.getAltura()==periodo.getAltura())|((altura.getAltura()<=periodo.getAltura())&&(periodo.getAltura()<=altura.getAlturaMax()))){
+                    periodo.addAlturaColision(altura.getAlturaMax()+78);
+                    periodo.setAlturaMax();
+                    hueco=false;
+                }
+            }
+            if(colisiona&&(!periodo.getDependientes().isEmpty())&&hueco){
+                anadidoColisiones(periodo,periodosCoincidentes);
+                //boolean subir=false;
+                //for (Periodo per:periodosCoincidentes){
+
+                //    if(per.getAltura()<=(periodo.getAlturaMax()+20)){
+                //    subir=true;}
+                //}
+                //if(subir){
+                //    for(Periodo per:periodosCoincidentes){
+                //        per.addAlturaColision(((per.getAltura()+periodo.getAlturaMax())+116)-(periodo.getAlturaMax()));
+                //        per.setAlturaMax();
+                //    }
+                // }
+            }
+            periodo.setAlturaMax();
+        }
     }
 
     private void anadidoColisiones(Periodo periodo,ArrayList<Periodo> periodosCoincidentes){
