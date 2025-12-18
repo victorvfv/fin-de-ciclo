@@ -261,6 +261,11 @@ public class MainViewController {
                         periodosCoincidentes.add(periodosCalcular.get(iter));
                         colisiona=true;
                     }
+                    //el periodo esta dentro de per //
+                    if(((f2p>f1E)&(f2p<=f2E))){
+                        periodosInterior.add(per);
+                        System.out.println(periodo.getTitulo() + " esta dentro de: " + per.getTitulo());
+                    }
                 }
                 iter++;
 
