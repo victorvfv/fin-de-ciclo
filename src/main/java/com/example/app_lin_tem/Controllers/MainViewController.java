@@ -270,7 +270,14 @@ public class MainViewController {
                 iter++;
 
             }
-            boolean hueco=true;
+            for(Periodo altura:periodosInterior){
+                //subimos al periodo interior
+                if((altura.getAltura()==periodo.getAltura())|((altura.getAltura()<=periodo.getAltura())&&(periodo.getAltura()<=altura.getAlturaMax()))){
+                    periodo.addAlturaColision(altura.getAlturaMax()+78);
+                    periodo.setAlturaMax();
+
+                }
+            }
             for(Periodo altura:periodosCoincidentes){
                 if((altura.getAltura()==periodo.getAltura())|((altura.getAltura()<=periodo.getAltura())&&(periodo.getAltura()<=altura.getAlturaMax()))){
                     periodo.addAlturaColision(altura.getAlturaMax()+78);
