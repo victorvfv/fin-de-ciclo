@@ -279,10 +279,11 @@ public class MainViewController {
                 }
             }
             for(Periodo altura:periodosCoincidentes){
-                if((altura.getAltura()==periodo.getAltura())|((altura.getAltura()<=periodo.getAltura())&&(periodo.getAltura()<=altura.getAlturaMax()))){
-                    periodo.addAlturaColision(altura.getAlturaMax()+78);
-                    periodo.setAlturaMax();
-                    hueco=false;
+                //subimos a los periodos coincidentes
+                if((periodo.getAltura()<=altura.getAlturaMax())){
+                    altura.addAlturaColision(periodo.getAlturaMax()+78);
+                    altura.setAlturaMax();
+
                 }
             }
             if(colisiona&&(!periodo.getDependientes().isEmpty())&&hueco){
