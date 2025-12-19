@@ -163,7 +163,7 @@ public class Periodo {
         AlturaMax = Altura;
         if(!Dependientes.isEmpty()){
             for(Periodo per:Dependientes){
-                AlturaMax=Math.max(AlturaMax, per.AlturaMax);
+                AlturaMax=Math.max(AlturaMax, per.Altura);
                 per.setAlturaMax();
             }
         }
