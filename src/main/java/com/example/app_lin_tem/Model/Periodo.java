@@ -18,6 +18,7 @@ public class Periodo {
     private Periodo Dependencia;
     private Color Color;
     private ArrayList<Periodo> Dependientes;
+    private ArrayList<Hito> hitosDependientes;
     private Image imagen;
 
     public Periodo() {
@@ -27,6 +28,7 @@ public class Periodo {
         Datos="";
         Id= UUID.randomUUID().toString();
         Dependientes = new ArrayList<>();
+        hitosDependientes= new ArrayList<>();
         Duracion=0;
         imagen = null;
         Altura=0;
@@ -112,6 +114,21 @@ public class Periodo {
         Dependientes.add(periodo);
         Dependientes.sort((per1,per2)->{
             return (int) -(per1.Duracion-per2.Duracion);
+        });
+    }
+
+    public void setHitosDependientes(ArrayList<Hito> hitosDependientes) {
+        this.hitosDependientes = hitosDependientes;
+    }
+
+    public ArrayList<Hito> getHitosDependientes() {
+        return hitosDependientes;
+    }
+
+    public void addHitosDependientes(Hito Hito){
+        hitosDependientes.add(Hito);
+        hitosDependientes.sort((per1,per2)->{
+            return (int) -(per1.getFecha()-per2.getFecha());
         });
     }
 

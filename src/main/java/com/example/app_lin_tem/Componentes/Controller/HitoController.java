@@ -92,7 +92,7 @@ public class HitoController  {
         }
         Dato.setText(Dato.getText()+" "+hito.getFecha());
         Dato.requestFocus();
-        Pestaña.setText("Periodo: "+NomHit.getText()+" "+hito.getFecha()+" ");
+        Pestaña.setText("Hito: "+NomHit.getText()+" "+hito.getFecha()+" ");
     }
 
     @FXML
@@ -106,7 +106,7 @@ public class HitoController  {
         hito.setTitulo(NomHit.getText());
         Dato.setText(Dato.getText()+" "+hito.getTitulo());
         Fecha.requestFocus();
-        Pestaña.setText("Periodo: "+hito.getTitulo()+" "+Fecha.getText()+" ");
+        Pestaña.setText("Hito: "+hito.getTitulo()+" "+Fecha.getText()+" ");
     }
 
     @FXML
@@ -129,6 +129,7 @@ public class HitoController  {
 
             if (periodo1.getTitulo().equals(Dependencias.getValue())) {
                 hito.setDependencia(periodo1);
+                periodo1.addHitosDependientes(hito);
                 bloqAC(true);
 
             } else if (" ".equals(Dependencias.getValue())) {

@@ -200,84 +200,31 @@ public class MainViewController {
                 calcularAlturaDependientes(periodo.getAltura()+58,periodo.getDependientes());
                 periodo.setAlturaMax();
             }
-            int iter=0;
-            ArrayList<Periodo> periodosCoincidentes = new ArrayList<>();
-            boolean colisiona=false;
-            while(periodosCalcular.size()!=iter){
-                if(periodo!=periodosCalcular.get(iter)){
-                    int f1o=periodo.getFecha1();
-                    int f2o=periodo.getFecha2();
-
-                    int f1p=periodosCalcular.get(iter).getFecha1();
-                    int f2p=periodosCalcular.get(iter).getFecha2();
-
-                    if((((f1p<=f1o)&(f1p<f2o))|((f2p<f1o)&(f2p<=f2o)))){
-                        periodosCoincidentes.add(periodosCalcular.get(iter));
-                        colisiona=true;
-                    }
-                }
-                iter++;
-
-            }
-            boolean hueco=true;
-            for(Periodo altura:periodosCoincidentes){
-                if((altura.getAltura()==periodo.getAltura())|((altura.getAltura()<=periodo.getAltura())&&(periodo.getAltura()<=altura.getAlturaMax()))){
-                    periodo.addAlturaColision(altura.getAlturaMax()+78);
-                    periodo.setAlturaMax();
-                    hueco=false;
-                }
-            }
-            if(colisiona&&(!periodo.getDependientes().isEmpty())&&hueco){
-                anadidoColisiones(periodo,periodosCoincidentes);
-                //boolean subir=false;
-                //for (Periodo per:periodosCoincidentes){
-
-                //    if(per.getAltura()<=(periodo.getAlturaMax()+20)){
-                //    subir=true;}
-                //}
-                //if(subir){
-                //    for(Periodo per:periodosCoincidentes){
-                //        per.addAlturaColision(((per.getAltura()+periodo.getAlturaMax())+116)-(periodo.getAlturaMax()));
-                //        per.setAlturaMax();
-                //    }
-               // }
-            }
-            periodo.setAlturaMax();
 
         }
-        for(Periodo periodo:periodosCalcular){
-            int iter=0;
-            ArrayList<Periodo> periodosCoincidentes = new ArrayList<>();
-            boolean colisiona=false;
-            while(periodosCalcular.size()!=iter){
-                if(periodo!=periodosCalcular.get(iter)){
-                    int f1o=periodo.getFecha1();
-                    int f2o=periodo.getFecha2();
 
-                    int f1p=periodosCalcular.get(iter).getFecha1();
-                    int f2p=periodosCalcular.get(iter).getFecha2();
 
-                    if((((f1p<=f1o)&(f1p<f2o))|((f2p<f1o)&(f2p<=f2o)))){
-                        periodosCoincidentes.add(periodosCalcular.get(iter));
-                        colisiona=true;
+        for(Periodo periodo: periodosCalcular){
+            ArrayList<Periodo> periodosCoincidentes= new ArrayList<>();
+
+            for(Periodo per:periodosCalcular){
+                double f1p=periodo.getFecha1();
+                double f2p=periodo.getFecha2();
+
+                double f1E=per.getFecha1();
+                double f2E=per.getFecha2();
+
+                if(periodo!=per){
+                    //per que la primera fecha es compartida por el periodo
+                    if(((f1E>=f1p)&(f1E<f2p))){
+
+                        periodosCoincidentes.add(per);
                     }
-                    //el periodo esta dentro de per //
-                    if(((f2p>f1E)&(f2p<=f2E))){
-                        periodosInterior.add(per);
-                        System.out.println(periodo.getTitulo() + " esta dentro de: " + per.getTitulo());
-                    }
-                }
-                iter++;
-
-            }
-            for(Periodo altura:periodosInterior){
-                //subimos al periodo interior
-                if((altura.getAltura()==periodo.getAltura())|((altura.getAltura()<=periodo.getAltura())&&(periodo.getAltura()<=altura.getAlturaMax()))){
-                    periodo.addAlturaColision(altura.getAlturaMax()+78);
-                    periodo.setAlturaMax();
 
                 }
+
             }
+
             for(Periodo altura:periodosCoincidentes){
                 //subimos a los periodos coincidentes
                 if((periodo.getAltura()<=altura.getAlturaMax())){
@@ -286,32 +233,50 @@ public class MainViewController {
 
                 }
             }
-            if(colisiona&&(!periodo.getDependientes().isEmpty())&&hueco){
-                anadidoColisiones(periodo,periodosCoincidentes);
-                //boolean subir=false;
-                //for (Periodo per:periodosCoincidentes){
 
-                //    if(per.getAltura()<=(periodo.getAlturaMax()+20)){
-                //    subir=true;}
-                //}
-                //if(subir){
-                //    for(Periodo per:periodosCoincidentes){
-                //        per.addAlturaColision(((per.getAltura()+periodo.getAlturaMax())+116)-(periodo.getAlturaMax()));
-                //        per.setAlturaMax();
-                //    }
-                // }
+        }
+
+        ArrayList<Periodo> periodosCalcularInver = periodosCalcular;
+        periodosCalcularInver.sort((linea1,linea2)->{
+            return linea2.getFecha2()-linea1.getFecha2();
+        });
+        for(Periodo periodo: periodosCalcularInver){
+            ArrayList<Periodo> periodosCoincidentes= new ArrayList<>();
+
+            for(Periodo per:periodosCalcularInver){
+                double f1p=periodo.getFecha1();
+                double f2p=periodo.getFecha2();
+
+                double f1E=per.getFecha1();
+                double f2E=per.getFecha2();
+
+                if(periodo!=per){
+                    //per que la primera fecha es compartida por el periodo
+                    if(((f2E>f1p)&(f2E<=f2p))&&(periodo.getAltura()<=per.getAlturaMax())){
+                        periodosCoincidentes.add(per);
+                        System.out.println(periodo.getTitulo()+" tiene a: "+per.getTitulo()+" dentro");
+                    }
+                }
             }
-            periodo.setAlturaMax();
+
+            for(Periodo altura:periodosCoincidentes){
+                //subimos a los periodos coincidentes
+                if((altura.getAltura()<=periodo.getAlturaMax())){
+                    altura.addAlturaColision(periodo.getAlturaMax()+78);
+                    altura.setAlturaMax();
+                    //System.out.println(periodo.getTitulo()+" ha hecho subir a: "+altura.getTitulo());
+                }
+            }
         }
     }
 
     private void anadidoColisiones(Periodo periodo,ArrayList<Periodo> periodosCoincidentes){
         for (Periodo per:periodosCoincidentes){
             double dato1=per.getAltura();
-            double dato2=periodo.getAlturaMax()+20;
+            double dato2=periodo.getAlturaMax()+78;
 
             if((dato1<=dato2)&&(per!=periodo)){
-                per.addAlturaColision(((per.getAltura()+periodo.getAlturaMax())+116)-(periodo.getAlturaMax()));
+                per.addAlturaColision((((per.getAltura()+periodo.getAlturaMax())+20)-(periodo.getAlturaMax())));
                 per.setAlturaMax();
 
                 ArrayList<Periodo> salida = new ArrayList<>();
@@ -404,15 +369,121 @@ public class MainViewController {
 
     }
 
+    public String getDivPer(Periodo periodo,int pad){
+        return "<div style=\"padding-left: "+pad+"px;\" >"
 
+                    +"<h3>"+"<b>"+periodo.getTitulo()+"  "+periodo.getFecha1()+"-"+periodo.getFecha2()+"</b>"+"</h3>"
+                    +"<div style=\"padding-left: "+(pad+25)+"px;\" >"
+
+                        +"<p>"+periodo.getDatos()+"</p>"+
+
+                    "</div>"+
+
+                "</div>";
+    }
+
+    public String getDivHit(Hito hito,int pad){
+        return "<div style=\"padding-left: "+pad+"px;\" >"+"<p>"+"<b>"+hito.getTitulo()+"</b>"+"</p>"+"</div>";
+    }
+
+    public String getTexto(Periodo periodo, int pad){
+        String texto="";
+        texto=getDivPer(periodo,pad);
+        //texto="<div style=\"padding-left: "+pad+"px;\" >"+"<p>"+"<b>"+periodo.getTitulo()+"</b>"+"</p>"+"</div>";
+        if(!periodo.getHitosDependientes().isEmpty()||!periodo.getDependientes().isEmpty()){
+
+            ArrayList<Hito> listaHit = periodo.getHitosDependientes();
+            listaHit.sort((line1,linea2)->{
+                return line1.getFecha()-linea2.getFecha();
+            });
+
+            ArrayList<Periodo> listaPer = periodo.getDependientes();
+            listaPer.sort((line1,linea2)->{
+                return line1.getFecha1()-linea2.getFecha1();
+            });
+            //hay mas periodos
+            if(periodo.getDependientes().size()>periodo.getHitosDependientes().size()){
+                int iterP=0,iterH=0;
+                while(iterP!=listaPer.size()){
+                    if(iterH!=listaHit.size()){
+                        //el periodo es anterior al hito
+                        if(listaPer.get(iterP).getFecha1()<=listaHit.get(iterH).getFecha()){
+                            texto=texto+getDivPer(listaPer.get(iterP),pad+50);
+                            if(!listaPer.get(iterP).getDependientes().isEmpty()){
+                                for(Periodo per:listaPer.get(iterP).getDependientes()){
+                                    texto=texto+getTexto(per,pad+100);
+                                }
+
+                            }
+                            iterP++;
+                        }
+                        else{
+                            texto=texto+"<div style=\"padding-left: "+(pad+50)+"px;\" >"+"<p>"+"<b>"+listaHit.get(iterH).getTitulo()+"</b>"+"</p>"+"</div>";
+                            iterH++;
+                        }
+                    }
+                    else {
+                        texto=texto+getDivPer(listaPer.get(iterP),pad+50);
+                        if(!listaPer.get(iterP).getDependientes().isEmpty()){
+                            for(Periodo per:listaPer.get(iterP).getDependientes()){
+                                texto=texto+getTexto(per,pad+100);
+                            }
+
+                        }
+                        iterP++;
+                    }
+                }
+                if(iterH!=listaHit.size()){
+                    while(iterH!=listaHit.size()){
+                        texto=texto+"<div style=\"padding-left: "+(pad+50)+"px;\" >"+"<p>"+"<b>"+listaHit.get(iterH).getTitulo()+"</b>"+"</p>"+"</div>";
+                        iterH++;
+                    }
+                }
+            }
+            //hay mas hitos
+            else{
+                int iterP=0,iterH=0;
+                while(iterH!=listaHit.size()){
+                    if(iterP!=listaPer.size()){
+                        //el periodo es anterior al hito
+                        if(listaPer.get(iterP).getFecha1()<=listaHit.get(iterH).getFecha()){
+
+                            texto=texto+getDivPer(listaPer.get(iterP),pad+50);
+
+                            if(!listaPer.get(iterP).getDependientes().isEmpty()){
+                                for(Periodo per:listaPer.get(iterP).getDependientes()){
+                                    getTexto(per,pad+50);
+                                }
+
+                            }
+                            iterP++;
+                        }
+                        else{
+                            texto=texto+"<div style=\"padding-left: "+(pad+50)+"px;\" >"+"<p>"+"<b>"+listaHit.get(iterH).getTitulo()+"</b>"+"</p>"+"</div>";
+                            iterH++;
+                        }
+                    }
+                    else {
+                        texto=texto+"<div style=\"padding-left: "+(pad+50)+"px;\" >"+"<p>"+"<b>"+listaHit.get(iterH).getTitulo()+"</b>"+"</p>"+"</div>";
+                        iterH++;
+                    }
+                }
+            }
+        }
+        return texto;
+    }
 
     @FXML
     public void prueba(){
         String texto="";
         int pad=10;
-        for (Periodo dato:periodos){
-            texto=texto+"<div style=\"padding-left: "+pad+"px;\" >"+"<p>"+"<b>"+dato.getTitulo()+"</b>"+"</p>"+"</div>";
-            pad+=50;
+        ArrayList<Periodo> listaOrdenada=crearArrayOrdenadoLineas();
+        for (Periodo periodo:listaOrdenada){
+            for(Periodo per:listaOrdenada){
+                texto=texto+getTexto(per,pad);
+            }
+
+
         }
         for(Hito dato:hitos){
 
