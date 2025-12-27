@@ -5,7 +5,7 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.HashSet;
 import java.util.UUID;
 
 public class Periodo {
@@ -16,10 +16,11 @@ public class Periodo {
     private double Duracion,Altura,AlturaMax;
     private String Datos;
     private Periodo Dependencia;
-    private Color Color;
-    private ArrayList<Periodo> Dependientes;
-    private ArrayList<Hito> hitosDependientes;
-    private Image imagen;
+    private String Color;
+    private String imagen;
+    private HashSet<String> IdDependientes,IdHitos;
+    private transient ArrayList<Periodo> periodosDependientes;
+    private transient ArrayList<Hito> hitosDependientes;
 
     public Periodo() {
         Titulo="";
@@ -27,12 +28,14 @@ public class Periodo {
         Fecha2=0;
         Datos="";
         Id= UUID.randomUUID().toString();
-        Dependientes = new ArrayList<>();
+        periodosDependientes = new ArrayList<>();
         hitosDependientes= new ArrayList<>();
         Duracion=0;
         imagen = null;
         Altura=0;
         AlturaMax=0;
+        IdDependientes=new HashSet<>();
+        IdHitos=new HashSet<>();
     }
 
     public Periodo(String titulo, int fecha1, int fecha2, String datos,Color color,String id) {
@@ -40,7 +43,7 @@ public class Periodo {
         Fecha1 = fecha1;
         Fecha2 = fecha2;
         Datos = datos;
-        Color = color;
+        Color = color.toString();
         Id=id;
     }
 
@@ -81,12 +84,12 @@ public class Periodo {
         Datos = datos;
     }
 
-    public Color getColor() {
+    public String getColor() {
         return Color;
     }
 
     public void setColor(Color color) {
-        Color = color;
+        Color = color.toString();
     }
 
     public Periodo getDependencia() {
@@ -102,17 +105,18 @@ public class Periodo {
     }
 
 
-    public ArrayList<Periodo> getDependientes() {
-        return Dependientes;
+    public ArrayList<Periodo> getPeriodosDependientes() {
+        return periodosDependientes;
     }
 
-    public void setDependientes(ArrayList<Periodo> dependientes) {
-        Dependientes = dependientes;
+    public void setPeriodosDependientes(ArrayList<Periodo> periodosDependientes) {
+        this.periodosDependientes = periodosDependientes;
     }
 
     public void addDependientes(Periodo periodo){
-        Dependientes.add(periodo);
-        Dependientes.sort((per1,per2)->{
+        IdDependientes.add(periodo.Id);
+        periodosDependientes.add(periodo);
+        periodosDependientes.sort((per1, per2)->{
             return (int) -(per1.Duracion-per2.Duracion);
         });
     }
@@ -125,8 +129,9 @@ public class Periodo {
         return hitosDependientes;
     }
 
-    public void addHitosDependientes(Hito Hito){
-        hitosDependientes.add(Hito);
+    public void addHitosDependientes(Hito hito){
+        IdHitos.add(hito.getID());
+        hitosDependientes.add(hito);
         hitosDependientes.sort((per1,per2)->{
             return (int) -(per1.getFecha()-per2.getFecha());
         });
@@ -147,8 +152,8 @@ public class Periodo {
 
     public void addAltura(double añadido){
         Altura=añadido;
-        if(!(Dependientes.isEmpty())){
-            for(Periodo periodo:Dependientes){
+        if(!(periodosDependientes.isEmpty())){
+            for(Periodo periodo: periodosDependientes){
                 periodo.addAltura(añadido+58);
             }
         }
@@ -157,19 +162,19 @@ public class Periodo {
     public void addAlturaColision(double añadido){
         double alt=getAltura();
         Altura=añadido;
-        if(!(Dependientes.isEmpty())){
-            for(Periodo periodo:Dependientes){
+        if(!(periodosDependientes.isEmpty())){
+            for(Periodo periodo: periodosDependientes){
                 periodo.addAltura((periodo.getAltura()+(añadido-alt)));
             }
         }
     }
 
-    public Image getImagen() {
+    public String getImagen() {
         return imagen;
     }
 
     public void setImagen(Image imagen) {
-        this.imagen = imagen;
+        this.imagen = imagen.getUrl();
     }
 
     public double getAlturaMax() {
@@ -178,8 +183,8 @@ public class Periodo {
 
     public void setAlturaMax() {
         AlturaMax = Altura;
-        if(!Dependientes.isEmpty()){
-            for(Periodo per:Dependientes){
+        if(!periodosDependientes.isEmpty()){
+            for(Periodo per: periodosDependientes){
                 AlturaMax=Math.max(AlturaMax, per.Altura);
                 per.setAlturaMax();
             }

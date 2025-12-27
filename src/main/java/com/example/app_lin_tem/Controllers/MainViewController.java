@@ -7,7 +7,9 @@ import com.example.app_lin_tem.Componentes.HitoUI;
 import com.example.app_lin_tem.Componentes.Lineas;
 import com.example.app_lin_tem.Componentes.PeriodoUI;
 import com.example.app_lin_tem.Model.Hito;
+import com.example.app_lin_tem.Model.JsonMaker;
 import com.example.app_lin_tem.Model.Periodo;
+import com.example.app_lin_tem.Model.Proyecto;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 
@@ -17,11 +19,8 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
 import javafx.scene.web.HTMLEditor;
+import javafx.stage.FileChooser;
 
 
 import java.io.IOException;
@@ -114,8 +113,8 @@ public class MainViewController {
         nombres.add("Buscador");
         for(Periodo per:crearArrayOrdenadoLineas()){
             nombres.add(per.getTitulo());
-            if(!per.getDependientes().isEmpty()){
-                ArrayList<Periodo> periodosDep=per.getDependientes();
+            if(!per.getPeriodosDependientes().isEmpty()){
+                ArrayList<Periodo> periodosDep=per.getPeriodosDependientes();
                 periodosDep.sort((per1,per2)->{return (per1.getFecha1()-per2.getFecha1());});
                 for(Periodo perDep:periodosDep){
                     nombres.add(" "+perDep.getTitulo());
@@ -196,8 +195,8 @@ public class MainViewController {
             periodo.setAltura(58);
             periodo.setAlturaMax();
 
-            if(!periodo.getDependientes().isEmpty()){
-                calcularAlturaDependientes(periodo.getAltura()+58,periodo.getDependientes());
+            if(!periodo.getPeriodosDependientes().isEmpty()){
+                calcularAlturaDependientes(periodo.getAltura()+58,periodo.getPeriodosDependientes());
                 periodo.setAlturaMax();
             }
 
@@ -320,11 +319,11 @@ public class MainViewController {
                     hueco=false;
                 }
             }
-            if(!periodo.getDependientes().isEmpty()){
-                calcularAlturaDependientes(periodo.getAltura()+58,periodo.getDependientes());
+            if(!periodo.getPeriodosDependientes().isEmpty()){
+                calcularAlturaDependientes(periodo.getAltura()+58,periodo.getPeriodosDependientes());
                 periodo.setAlturaMax();
             }
-            if(colisiona&&(!periodo.getDependientes().isEmpty()&&hueco)){
+            if(colisiona&&(!periodo.getPeriodosDependientes().isEmpty()&&hueco)){
                 for (Periodo per:periodosCoincidentes){
                     per.addAltura(periodo.getAlturaMax()+58);
                     per.setAlturaMax();
@@ -390,27 +389,27 @@ public class MainViewController {
         String texto="";
         texto=getDivPer(periodo,pad);
         //texto="<div style=\"padding-left: "+pad+"px;\" >"+"<p>"+"<b>"+periodo.getTitulo()+"</b>"+"</p>"+"</div>";
-        if(!periodo.getHitosDependientes().isEmpty()||!periodo.getDependientes().isEmpty()){
+        if(!periodo.getHitosDependientes().isEmpty()||!periodo.getPeriodosDependientes().isEmpty()){
 
             ArrayList<Hito> listaHit = periodo.getHitosDependientes();
             listaHit.sort((line1,linea2)->{
                 return line1.getFecha()-linea2.getFecha();
             });
 
-            ArrayList<Periodo> listaPer = periodo.getDependientes();
+            ArrayList<Periodo> listaPer = periodo.getPeriodosDependientes();
             listaPer.sort((line1,linea2)->{
                 return line1.getFecha1()-linea2.getFecha1();
             });
             //hay mas periodos
-            if(periodo.getDependientes().size()>periodo.getHitosDependientes().size()){
+            if(periodo.getPeriodosDependientes().size()>periodo.getHitosDependientes().size()){
                 int iterP=0,iterH=0;
                 while(iterP!=listaPer.size()){
                     if(iterH!=listaHit.size()){
                         //el periodo es anterior al hito
                         if(listaPer.get(iterP).getFecha1()<=listaHit.get(iterH).getFecha()){
                             texto=texto+getDivPer(listaPer.get(iterP),pad+50);
-                            if(!listaPer.get(iterP).getDependientes().isEmpty()){
-                                for(Periodo per:listaPer.get(iterP).getDependientes()){
+                            if(!listaPer.get(iterP).getPeriodosDependientes().isEmpty()){
+                                for(Periodo per:listaPer.get(iterP).getPeriodosDependientes()){
                                     texto=texto+getTexto(per,pad+100);
                                 }
 
@@ -424,8 +423,8 @@ public class MainViewController {
                     }
                     else {
                         texto=texto+getDivPer(listaPer.get(iterP),pad+50);
-                        if(!listaPer.get(iterP).getDependientes().isEmpty()){
-                            for(Periodo per:listaPer.get(iterP).getDependientes()){
+                        if(!listaPer.get(iterP).getPeriodosDependientes().isEmpty()){
+                            for(Periodo per:listaPer.get(iterP).getPeriodosDependientes()){
                                 texto=texto+getTexto(per,pad+100);
                             }
 
@@ -450,8 +449,8 @@ public class MainViewController {
 
                             texto=texto+getDivPer(listaPer.get(iterP),pad+50);
 
-                            if(!listaPer.get(iterP).getDependientes().isEmpty()){
-                                for(Periodo per:listaPer.get(iterP).getDependientes()){
+                            if(!listaPer.get(iterP).getPeriodosDependientes().isEmpty()){
+                                for(Periodo per:listaPer.get(iterP).getPeriodosDependientes()){
                                     getTexto(per,pad+50);
                                 }
 
@@ -536,5 +535,15 @@ public class MainViewController {
 
     public void bloqCamposPorDepencdencia(Periodo periodo){
         ControladoresPer.get(periodo.getId()).bloquearHabilitarCampos();
+    }
+
+    @FXML
+    public void Guardar(){
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("selecciona el fichero");
+        fileChooser.showOpenDialog(null);
+        Proyecto proyecto = new Proyecto("1","Hola",periodos,hitos);
+        JsonMaker gson = new JsonMaker();
+        System.out.println( gson.getJson(proyecto));
     }
 }

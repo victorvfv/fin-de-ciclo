@@ -61,8 +61,6 @@ public class PeriodoController {
 
     }
 
-
-
     @FXML
     protected void OnFechaChanged1(){
         if(Fecha1.getText().equals("0")){
@@ -166,21 +164,23 @@ public class PeriodoController {
                 if(periodoDep.getTitulo().equals(Dependencias.getValue())){
 
                     periodo.setDependencia(periodoDep);
-                    if(periodo.getDependencia().getDependientes().size()<1){
+                    if(periodo.getDependencia().getPeriodosDependientes().size()<1){
                         mainViewController.bloqCamposPorDepencdencia(periodo.getDependencia());
                     }
                     if(periodo.getDependencia()!=null){
-                        periodo.getDependencia().getDependientes().remove(periodo);
+                        periodo.getDependencia().getPeriodosDependientes().remove(periodo);
                     }
                     periodoDep.addDependientes(periodo);
-                    newColor(colorDependiente(periodoDep.getColor().getRed(),periodoDep.getColor().getGreen(),periodoDep.getColor().getBlue()));
+                    Color color= javafx.scene.paint.Color.web(periodoDep.getColor());
+                    newColor(colorDependiente(color.getRed(),color.getGreen(),color.getBlue()));
 
 
 
                 } else if (" ".equals(Dependencias.getValue())) {
                     try{
-                        periodo.getDependencia().getDependientes().remove(periodo);
-                        if(periodo.getDependencia().getDependientes().isEmpty()){
+                        periodo.getDependencia().getPeriodosDependientes().remove(periodo);
+
+                        if(periodo.getDependencia().getPeriodosDependientes().isEmpty()){
                             mainViewController.bloqCamposPorDepencdencia(periodo.getDependencia());
                         }
                     }catch (NullPointerException _){}
@@ -233,7 +233,7 @@ public class PeriodoController {
         ButtonType btn =confirmation.showAndWait().get();
         if(btn==ButtonType.OK){
             if(periodo.getDependencia()!=null){
-            periodo.getDependencia().getDependientes().remove(periodo);}
+            periodo.getDependencia().getPeriodosDependientes().remove(periodo);}
             mainViewController.delVistaPer(periodo);
         }
     }

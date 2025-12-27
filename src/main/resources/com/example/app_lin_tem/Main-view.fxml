@@ -37,7 +37,7 @@
       </SplitPane>
       <ToolBar prefHeight="40.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
-          <Button mnemonicParsing="false" prefHeight="35.0" prefWidth="103.0" text="Guardar" />
+          <Button mnemonicParsing="false" onAction="#Guardar" prefHeight="35.0" prefWidth="103.0" text="Guardar" />
             <Button mnemonicParsing="false" onAction="#prueba" text="Cargar" />
             <Button fx:id="BtnPer" mnemonicParsing="false" onAction="#onButtonPeridoClick" text="Periodo" />
             <Button fx:id="BtnHit" mnemonicParsing="false" onAction="#onButtonHitoClick" text="Hito" />

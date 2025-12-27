@@ -9,7 +9,7 @@ public class Hito {
     private String Titulo,ID;
     private int Fecha;
     private String Datos;
-    private Color Color;
+    private String Color;
     private Periodo Dependencia;
 
 
@@ -22,7 +22,7 @@ public class Hito {
         Fecha = fecha;
         Datos = datos;
         Dependencia = dependencia;
-        Color=color;
+        Color=color.toString();
         ID=id;
     }
 
@@ -50,12 +50,12 @@ public class Hito {
         Datos = datos;
     }
 
-    public Color getColor() {
+    public String getColor() {
         return Color;
     }
 
     public void setColor(Color color) {
-        Color = color;
+        Color = color.toString();
     }
 
     public Periodo getDependencia() {

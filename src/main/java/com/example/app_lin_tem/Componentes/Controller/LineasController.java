@@ -7,14 +7,13 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.Random;
 import java.util.UUID;
 
 public class LineasController {
@@ -111,7 +110,7 @@ public class LineasController {
         fch1.setText(""+ periodo.getFecha1());
         fch2.setText(""+periodo.getFecha2());
         titulo.setText(periodo.getTitulo());
-        linea.setFill(periodo.getColor());
+        linea.setFill(Color.web(periodo.getColor()) );
     }
 
     public Periodo getPeriodo() {
@@ -131,7 +130,8 @@ public class LineasController {
             stage.show();
 
             VistaPeriodoController ctr=loader.getController();
-            ctr.setData(periodo.getTitulo(), periodo.getDatos(), periodo.getFecha1(), periodo.getFecha2(), periodo.getDependientes(),periodo.getImagen());
+            Image image= new Image(periodo.getImagen());
+            ctr.setData(periodo.getTitulo(), periodo.getDatos(), periodo.getFecha1(), periodo.getFecha2(), periodo.getPeriodosDependientes(), image);
         } catch (IOException _) {}
 
     }

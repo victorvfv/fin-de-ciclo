@@ -4,6 +4,7 @@ module com.example.app_lin_tem {
     requires javafx.web;
     requires org.controlsfx.controls;
     requires java.desktop;
+    requires com.google.gson;
 
 
     opens com.example.app_lin_tem to javafx.fxml;
@@ -18,6 +19,8 @@ module com.example.app_lin_tem {
 
     opens com.example.app_lin_tem.Componentes.Controller to javafx.fxml;
     exports com.example.app_lin_tem.Componentes.Controller;
+
+    opens com.example.app_lin_tem.Model to com.google.gson;
 
 
 
