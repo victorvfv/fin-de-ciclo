@@ -6,15 +6,16 @@ import java.util.UUID;
 public class Hito {
 
 
-    private String Titulo,ID;
+    private String Titulo, Id;
     private int Fecha;
     private String Datos;
     private String Color;
-    private Periodo Dependencia;
+    private String dependenciaId;
+    private transient Periodo Dependencia;
 
 
     public Hito() {
-        ID= UUID.randomUUID().toString();
+        Id = UUID.randomUUID().toString();
     }
 
     public Hito(String titulo, int fecha, String datos, Periodo dependencia,Color color,String id) {
@@ -23,7 +24,7 @@ public class Hito {
         Datos = datos;
         Dependencia = dependencia;
         Color=color.toString();
-        ID=id;
+        Id =id;
     }
 
     public String getTitulo() {
@@ -64,14 +65,15 @@ public class Hito {
 
     public void setDependencia(Periodo dependencia) {
         Dependencia = dependencia;
+        dependenciaId = dependencia.getId();
     }
 
-    public String getID() {
-        return ID;
+    public String getId() {
+        return Id;
     }
 
-    public void setID(String ID) {
-        this.ID = ID;
+    public void setId(String id) {
+        this.Id = id;
     }
 
 

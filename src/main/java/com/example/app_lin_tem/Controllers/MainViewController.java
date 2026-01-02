@@ -138,7 +138,7 @@ public class MainViewController {
         }
         for(Hito hit : hitos){
             if(Buscador.getValue().toString().equals(hit.getTitulo())){
-                target= vistas.get(hit.getID());
+                target= vistas.get(hit.getId());
             }
         }
         if(target!=null){
@@ -157,8 +157,8 @@ public class MainViewController {
 
         HitoController hitoController = hitoUI.ctr;
         hitos.add(hitoController.getHito());
-        vistas.put(hitoController.getHito().getID(),hitoUI);
-        ControladoresHit.put(hitoController.getHito().getID(),hitoController);
+        vistas.put(hitoController.getHito().getId(),hitoUI);
+        ControladoresHit.put(hitoController.getHito().getId(),hitoController);
 
         hitoController.setMainViewController(this);
         hitoController.setPeriodos(periodos);
@@ -506,7 +506,7 @@ public class MainViewController {
             try{
                 if(depencia.getDependencia().getId().equals(id)){
                     depencia.setDependencia(null);
-                   ControladoresHit.get(depencia.getID()).setComboBox(" ");
+                   ControladoresHit.get(depencia.getId()).setComboBox(" ");
                 }
             } catch (NullPointerException e) {}
         }
@@ -517,7 +517,7 @@ public class MainViewController {
     }
 
     public void delVistaHit(Hito hito){
-        String id=hito.getID();
+        String id=hito.getId();
         hitos.remove(hito);
         VboxData.getChildren().remove(vistas.get(id));
     }

@@ -23,5 +23,4 @@ module com.example.app_lin_tem {
     opens com.example.app_lin_tem.Model to com.google.gson;
 
 
-
 }

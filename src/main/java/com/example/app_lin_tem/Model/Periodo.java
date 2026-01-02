@@ -15,11 +15,12 @@ public class Periodo {
     private int Fecha2;
     private double Duracion,Altura,AlturaMax;
     private String Datos;
-    private Periodo Dependencia;
+    private String dependeciaId;
     private String Color;
     private String imagen;
     private HashSet<String> IdDependientes,IdHitos;
-    private transient ArrayList<Periodo> periodosDependientes;
+    private transient Periodo Dependencia;
+    private transient  ArrayList<Periodo> periodosDependientes;
     private transient ArrayList<Hito> hitosDependientes;
 
     public Periodo() {
@@ -98,6 +99,15 @@ public class Periodo {
 
     public void setDependencia(Periodo dependencia) {
         Dependencia = dependencia;
+        dependeciaId= dependencia.getId();
+    }
+
+    public String getDependeciaId() {
+        return dependeciaId;
+    }
+
+    public void setDependeciaId(String dependeciaId) {
+        this.dependeciaId = dependeciaId;
     }
 
     public String getId() {
@@ -130,7 +140,7 @@ public class Periodo {
     }
 
     public void addHitosDependientes(Hito hito){
-        IdHitos.add(hito.getID());
+        IdHitos.add(hito.getId());
         hitosDependientes.add(hito);
         hitosDependientes.sort((per1,per2)->{
             return (int) -(per1.getFecha()-per2.getFecha());
