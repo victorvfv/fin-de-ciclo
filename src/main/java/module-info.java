@@ -5,6 +5,8 @@ module com.example.app_lin_tem {
     requires org.controlsfx.controls;
     requires java.desktop;
     requires com.google.gson;
+    requires retrofit2;
+    requires retrofit2.converter.gson;
 
 
     opens com.example.app_lin_tem to javafx.fxml;

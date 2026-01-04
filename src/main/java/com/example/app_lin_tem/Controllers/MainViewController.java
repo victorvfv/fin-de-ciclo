@@ -13,7 +13,11 @@ import com.example.app_lin_tem.Model.Proyecto;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
@@ -21,6 +25,10 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.web.HTMLEditor;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.util.Duration;
+import org.controlsfx.control.Notifications;
 
 
 import java.io.IOException;
@@ -474,6 +482,7 @@ public class MainViewController {
 
     @FXML
     public void prueba(){
+
         String texto="";
         int pad=10;
         ArrayList<Periodo> listaOrdenada=crearArrayOrdenadoLineas();
@@ -545,5 +554,53 @@ public class MainViewController {
         Proyecto proyecto = new Proyecto("1","Hola",periodos,hitos);
         JsonMaker gson = new JsonMaker();
         System.out.println( gson.getJson(proyecto));
+    }
+
+    @FXML
+    public void iniciarSesion(){
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/app_lin_tem/Login.fxml"));
+        try {
+            Parent root = loader.load();
+
+            Scene scene = new Scene(root);
+            Stage stage = new Stage();
+            stage.setScene(scene);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            LoginController ctr= loader.getController();
+            ctr.setVista(true);
+            stage.showAndWait();
+
+
+
+        } catch (IOException e) {System.out.println(e);}
+    }
+
+    @FXML
+    public void crearSesion(){
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/app_lin_tem/Login.fxml"));
+        try {
+            Parent root = loader.load();
+
+            Scene scene = new Scene(root);
+            Stage stage = new Stage();
+            stage.setScene(scene);
+
+            stage.initModality(Modality.APPLICATION_MODAL);
+
+            LoginController ctr= loader.getController();
+            ctr.setVista(false);
+            stage.showAndWait();
+
+
+
+        } catch (IOException e) {System.out.println(e);}
+    }
+
+    public void toast(String texto){
+        Notifications.create()
+                .text(texto)
+                .hideAfter(Duration.seconds(2))
+                .position(Pos.BOTTOM_RIGHT)
+                .showInformation();
     }
 }

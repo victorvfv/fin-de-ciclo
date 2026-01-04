@@ -43,6 +43,8 @@
             <Button fx:id="BtnHit" mnemonicParsing="false" onAction="#onButtonHitoClick" text="Hito" />
             <Button mnemonicParsing="false" onAction="#onButtonCrearCLick" text="Crear Linea" />
             <Button mnemonicParsing="false" onAction="#onActionBottonMostrar" text="Mostrar" />
+            <Button mnemonicParsing="false" onAction="#iniciarSesion" text="Iniciar sesion" />
+            <Button mnemonicParsing="false" onAction="#crearSesion" text="Crear sesion" />
         </items>
       </ToolBar>
    </children>
