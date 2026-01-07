@@ -7,8 +7,10 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
 
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -271,6 +273,25 @@ public class PeriodoController {
         }
         else{
             return  new Color(random.nextDouble(1),random.nextDouble(1),random.nextDouble(1),1);
+        }
+    }
+
+    @FXML
+    protected void añadirImagen(){
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("selecciona la imagen");
+        FileChooser.ExtensionFilter imageFilter =
+                new FileChooser.ExtensionFilter(
+                        "Archivos de imagen (*.png, *.jpg, *.jpeg, *.gif)",
+                        "*.png", "*.jpg", "*.jpeg", "*.gif"
+                );
+
+        fileChooser.getExtensionFilters().add(imageFilter);
+        fileChooser.setSelectedExtensionFilter(imageFilter);
+
+        File Url =fileChooser.showOpenDialog(null);
+        if(Url!=null){
+            periodo.setImagen(Url.getAbsolutePath());
         }
     }
 }

@@ -9,21 +9,24 @@ public class Hito {
     private String Titulo, Id;
     private int Fecha;
     private String Datos;
-    private String Color;
+    private double Altura, alturaDep;
+    private String imagen;
     private String dependenciaId;
     private transient Periodo Dependencia;
 
 
     public Hito() {
         Id = UUID.randomUUID().toString();
+        Titulo = "";
+        Fecha = 0;
+        Datos = "";
     }
 
-    public Hito(String titulo, int fecha, String datos, Periodo dependencia,Color color,String id) {
+    public Hito(String titulo, int fecha, String datos, Periodo dependencia,String id) {
         Titulo = titulo;
         Fecha = fecha;
         Datos = datos;
         Dependencia = dependencia;
-        Color=color.toString();
         Id =id;
     }
 
@@ -51,14 +54,6 @@ public class Hito {
         Datos = datos;
     }
 
-    public String getColor() {
-        return Color;
-    }
-
-    public void setColor(Color color) {
-        Color = color.toString();
-    }
-
     public Periodo getDependencia() {
         return Dependencia;
     }
@@ -77,4 +72,57 @@ public class Hito {
     }
 
 
+    public double getAltura() {
+        return Altura;
+    }
+
+    public void setAltura(double altura) {
+        Altura=altura;
+    }
+
+    public void addAltura(double add){
+        Altura=Altura+add;
+    }
+
+    public void setAlturaDep(){
+        alturaDep=Dependencia.getAltura();
+    }
+
+    public void setAlturaNDep(double alturaDep){
+        this.alturaDep=alturaDep;
+    }
+
+    public Periodo getPadreCaja(Periodo dependencia){
+        if(dependencia!=null){
+            if(dependencia.getDependencia()==null){
+            return dependencia;
+        }
+        return getPadreCaja(dependencia.getDependencia());
+    }
+        return null;
+    }
+
+    public String getImagen() {
+        return imagen;
+    }
+
+    public void setImagen(String imagen) {
+        this.imagen = imagen.replace("\\","/");;
+    }
+
+    public String getDependenciaId() {
+        return dependenciaId;
+    }
+
+    public void setDependenciaId(String dependenciaId) {
+        this.dependenciaId = dependenciaId;
+    }
+
+    public double getAlturaDep() {
+        return alturaDep;
+    }
+
+    public void setAlturaDep(double alturaDep) {
+        this.alturaDep = alturaDep;
+    }
 }

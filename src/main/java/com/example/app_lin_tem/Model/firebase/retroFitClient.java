@@ -6,7 +6,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public record retroFitClient() {
     public static fireBaseAuth authApi() {
         return new Retrofit.Builder()
-                .baseUrl("https://identitytoolkit.googleapis.com/v1/")
+                .baseUrl("https://identitytoolkit.googleapis.com/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(fireBaseAuth.class);
@@ -14,9 +14,16 @@ public record retroFitClient() {
 
     public static fireBaseData databaseApi() {
         return new Retrofit.Builder()
-                .baseUrl("https://TU_DATABASE.firebaseio.com/")
+                .baseUrl("https://timeaftertime-d2ad9-default-rtdb.europe-west1.firebasedatabase.app/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(fireBaseData.class);
+    }
+
+    public static fireBaseTokenApi tokenApi(){
+        return new Retrofit.Builder().baseUrl("https://securetoken.googleapis.com/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(fireBaseTokenApi.class);
     }
 }

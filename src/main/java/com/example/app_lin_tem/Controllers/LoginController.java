@@ -1,10 +1,9 @@
 package com.example.app_lin_tem.Controllers;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.*;
+
+import java.io.IOException;
 
 public class LoginController {
 
@@ -20,22 +19,32 @@ public class LoginController {
     @FXML
     private ToggleButton TBVer;
 
+    @FXML
+    private Button botonAcep;
+
     private String emailS, contrasena;
 
     private boolean incio;
+
+    private MainViewController ctr;
 
     @FXML
     private void contrasenaNvisible(){
         contrasena=passwordField.getText();
         password.setText(contrasena);
-        comprobarPassword();
+        if(!incio){
+            comprobarPassword();
+        }
     }
 
     @FXML
     private void contrasenaVisble(){
         contrasena=password.getText();
         passwordField.setText(contrasena);
-        comprobarPassword();
+        if(!incio){
+            comprobarPassword();
+        }
+
     }
 
     @FXML
@@ -68,6 +77,7 @@ public class LoginController {
         if(inicio){
             loginText.setVisible(true);
             Link.setVisible(true);
+            botonAcep.setText("Iniciar sesión");
         }
         else{
             ErrEsp.setVisible(true);
@@ -75,7 +85,25 @@ public class LoginController {
             ErrMayus.setVisible(true);
             ErrCarac.setVisible(true);
             newLog.setVisible(true);
+            botonAcep.setText("crear sesión");
         }
         this.incio=inicio;
+    }
+
+    public void setCtr(MainViewController ctr){
+        this.ctr=ctr;
+    }
+
+
+    @FXML
+    public void crearOiniciar() throws IOException {
+        if(contrasena.length()>=8&&email.getText().length()>0){
+            if(incio){
+            ctr.iniciarSesionUI(email.getText(),contrasena);
+        }
+        else{
+            ctr.crearSesionUI(email.getText(),contrasena);
+        }
+    }
     }
 }

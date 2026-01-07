@@ -11,23 +11,24 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<fx:root fx:id="Pestaña" prefHeight="301.0" prefWidth="364.0" text="Periodo: " type="TitledPane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root fx:id="Pestaña" prefHeight="301.0" prefWidth="364.0" stylesheets="@../css/cssEstiloGeneral.css" text="Periodo: " type="TitledPane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
                      <content>
                           <AnchorPane prefHeight="266.0" prefWidth="278.0">
                               <children>
                                   <TextField fx:id="NomPer" layoutX="14.0" layoutY="14.0" onAction="#OnActionTitulo" onDragExited="#OnActionTitulo" prefHeight="26.0" prefWidth="119.0" promptText="Titulo" />
                                   <TextField fx:id="Fecha1" layoutX="143.0" layoutY="15.0" onKeyPressed="#OnFechaKeyPress1" onKeyReleased="#OnFechaChanged1" prefHeight="26.0" prefWidth="67.0" promptText="Fecha 1" />
                                   <TextField fx:id="Fecha2" layoutX="221.0" layoutY="15.0" onAction="#OnActionFecha2" onKeyPressed="#OnFechaKeyPress2" onKeyReleased="#OnFechaChanged2" prefHeight="26.0" prefWidth="67.0" promptText="Fecha 2" />
-                                  <TextArea fx:id="Dato" focusTraversable="false" layoutX="14.0" layoutY="86.0" onKeyReleased="#setDato" prefHeight="168.0" prefWidth="270.0" wrapText="true" />
+                                  <TextArea fx:id="Dato" focusTraversable="false" layoutX="14.0" layoutY="90.0" onKeyReleased="#setDato" prefHeight="168.0" prefWidth="270.0" wrapText="true" />
                                   <ColorPicker fx:id="Color" layoutX="14.0" layoutY="50.0" onAction="#setColor" prefHeight="26.0" prefWidth="85.0" />
-                              <ComboBox fx:id="Dependencias" layoutX="100.0" layoutY="50.0" onAction="#onActionComboBox" onMouseClicked="#setDependecias" prefHeight="26.0" prefWidth="184.0" />
-                                  <Separator layoutX="14.0" layoutY="258.0" prefHeight="11.0" prefWidth="289.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
-                              <Text layoutX="204.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="-" textAlignment="CENTER" wrappingWidth="11.19879150390625" AnchorPane.rightAnchor="145.0" AnchorPane.topAnchor="1.0">
+                              <ComboBox fx:id="Dependencias" layoutX="100.0" layoutY="50.0" onAction="#onActionComboBox" onMouseClicked="#setDependecias" prefHeight="20.0" prefWidth="184.0" />
+                                  <Separator layoutX="16.0" layoutY="268.0" prefHeight="11.0" prefWidth="289.0" AnchorPane.bottomAnchor="-4.800000000000011" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                              <Text layoutX="197.0" layoutY="39.2193359375" strokeType="OUTSIDE" strokeWidth="0.0" text="-" textAlignment="CENTER" wrappingWidth="16.79889941215515" AnchorPane.rightAnchor="160.6" AnchorPane.topAnchor="1.5">
                                  <font>
                                     <Font size="23.0" />
                                  </font>
                               </Text>
                               <Button layoutX="297.0" layoutY="16.0" mnemonicParsing="false" onAction="#eliminar" text="Eliminar" />
+            <Button layoutX="300.0" layoutY="51.0" mnemonicParsing="false" onAction="#añadirImagen" text="Imagen" />
                               </children>
                           </AnchorPane>
                      </content>

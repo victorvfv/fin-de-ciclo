@@ -1,0 +1,163 @@
+/* ======================================================
+   GOOGLE DOCS STYLE — GLOBAL
+   ====================================================== */
+
+.root {
+    -fx-font-family: "Segoe UI", "Roboto", sans-serif;
+    -fx-background-color: #f8f9fa;
+    -fx-text-fill: #202124;
+}
+
+/* ======================================================
+   TITLED PANE (HITO / PERIODO)
+   ====================================================== */
+
+.titled-pane {
+    -fx-background-color: white;
+    -fx-border-color: #dadce0;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+}
+
+.titled-pane > .title {
+    -fx-background-color: #f1f3f4;
+    -fx-border-color: #dadce0;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 6 10;
+}
+
+.titled-pane > .title > .text {
+    -fx-font-weight: bold;
+    -fx-text-fill: #202124;
+}
+
+.titled-pane > .content {
+    -fx-padding: 12;
+    -fx-background-color: white;
+}
+
+/* ======================================================
+   TEXT INPUTS
+   ====================================================== */
+
+.text-field,
+.password-field,
+.text-area {
+    -fx-background-color: white;
+    -fx-border-color: #dadce0;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 6;
+}
+
+.text-area {
+    -fx-control-inner-background: white;
+}
+
+.text-field:focused,
+.password-field:focused,
+.text-area:focused {
+    -fx-border-color: #1a73e8;
+    -fx-border-width: 2;
+}
+
+/* ======================================================
+   COMBOBOX & COLOR PICKER
+   ====================================================== */
+
+.combo-box,
+.color-picker {
+    -fx-background-color: white;
+    -fx-border-color: #dadce0;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.combo-box:focused,
+.color-picker:focused {
+    -fx-border-color: #1a73e8;
+    -fx-border-width: 2;
+}
+
+/* ======================================================
+   BUTTONS
+   ====================================================== */
+
+.button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-fill: #1a73e8;
+    -fx-font-weight: bold;
+    -fx-padding: 6 12;
+    -fx-background-radius: 4;
+}
+
+.button:hover {
+    -fx-background-color: #e8f0fe;
+}
+
+.button:pressed {
+    -fx-background-color: #d2e3fc;
+}
+
+/* Primary action (Login button) */
+#botonAcep {
+    -fx-background-color: #1a73e8;
+    -fx-text-fill: white;
+}
+
+#botonAcep:hover {
+    -fx-background-color: #1669c1;
+}
+
+/* ======================================================
+   CHECKBOX & TOGGLE BUTTON
+   ====================================================== */
+
+.check-box {
+    -fx-text-fill: #202124;
+}
+
+.toggle-button {
+    -fx-background-color: transparent;
+    -fx-border-color: #dadce0;
+    -fx-border-radius: 4;
+}
+
+.toggle-button:selected {
+    -fx-background-color: #e8f0fe;
+    -fx-border-color: #1a73e8;
+}
+
+/* ======================================================
+   LABELS
+   ====================================================== */
+
+.label {
+    -fx-text-fill: #202124;
+    -fx-font-size: 13px;
+}
+
+/* Error labels (password rules, etc.) */
+.label:error {
+    -fx-text-color: #808080;
+    -fx-text-fill: #d93025;
+}
+
+/* Links */
+#Link {
+    -fx-text-fill: #1a73e8;
+}
+
+#Link:hover {
+    -fx-underline: true;
+    -fx-cursor: hand;
+}
+
+/* ======================================================
+   SEPARATOR
+   ====================================================== */
+
+.separator {
+    -fx-background-color: #dadce0;
+}

@@ -1,0 +1,131 @@
+/* =========================
+   GLOBAL
+   ========================= */
+.root {
+    -fx-font-family: "Segoe UI", "Roboto", sans-serif;
+    -fx-background-color: #f8f9fa;
+    -fx-text-fill: #202124;
+}
+
+/* =========================
+   TOOLBAR
+   ========================= */
+.tool-bar {
+    -fx-background-color: white;
+    -fx-border-color: #dadce0;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 6;
+    -fx-spacing: 6;
+}
+
+/* =========================
+   BUTTONS
+   ========================= */
+.button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-fill: #202124;
+    -fx-font-size: 13px;
+    -fx-padding: 6 10;
+    -fx-background-radius: 4;
+}
+
+.button:hover {
+    -fx-background-color: #e8f0fe;
+}
+
+.button:pressed {
+    -fx-background-color: #d2e3fc;
+}
+
+
+/* =========================
+   TEXTFIELD & COMBOBOX
+   ========================= */
+.text-field,
+.combo-box {
+    -fx-background-color: white;
+    -fx-border-color: #dadce0;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 6;
+}
+
+.text-field:focused,
+.combo-box:focused {
+    -fx-border-color: #1a73e8;
+    -fx-border-width: 2;
+}
+
+/* =========================
+   MENUBAR
+   ========================= */
+.menu-bar {
+    -fx-background-color: transparent;
+}
+
+.menu {
+    -fx-text-fill: #202124;
+}
+
+.menu:hover {
+    -fx-background-color: #e8f0fe;
+}
+
+/* =========================
+   SPLITPANE
+   ========================= */
+.split-pane {
+    -fx-background-color: #f8f9fa;
+}
+
+.split-pane-divider {
+    -fx-background-color: #dadce0;
+    -fx-padding: 0 1 0 1;
+}
+
+/* =========================
+   SCROLLPANE
+   ========================= */
+.scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+/* =========================
+   CONTENEDORES
+   ========================= */
+#jaulaLineas,
+#VboxData {
+    -fx-background-color: white;
+    -fx-padding: 12;
+    -fx-spacing: 8;
+}
+
+/* =========================
+   HTML EDITOR
+   ========================= */
+.html-editor {
+    -fx-background-color: white;
+    -fx-border-color: #dadce0;
+}
+
+.html-editor .tool-bar {
+    -fx-background-color: #f1f3f4;
+}
+
+/* =========================
+   SCROLLBAR (sutil)
+   ========================= */
+.scroll-bar:vertical,
+.scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #dadce0;
+    -fx-background-radius: 4;
+}

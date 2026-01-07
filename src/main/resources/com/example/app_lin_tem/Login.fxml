@@ -8,13 +8,13 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="492.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.app_lin_tem.Controllers.LoginController">
+<AnchorPane prefHeight="400.0" prefWidth="492.0" stylesheets="@css/cssEstiloGeneral.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.app_lin_tem.Controllers.LoginController">
    <children>
       <Label layoutX="151.0" layoutY="84.0" prefHeight="26.0" prefWidth="150.0" text="Correo Elecctronico" />
       <TextField fx:id="email" layoutX="151.0" layoutY="111.0" prefHeight="26.0" prefWidth="150.0" />
       <Label layoutX="151.0" layoutY="137.0" prefHeight="26.0" prefWidth="150.0" text="Contraseña" />
       <TextField fx:id="password" layoutX="151.0" layoutY="163.0" onKeyTyped="#contrasenaVisble" prefHeight="26.0" prefWidth="150.0" visible="false" />
-      <Button layoutX="151.0" layoutY="288.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="150.0" text="Button" />
+      <Button fx:id="botonAcep" layoutX="151.0" layoutY="288.0" mnemonicParsing="false" onAction="#crearOiniciar" prefHeight="26.0" prefWidth="150.0" text="Button" />
       <Label fx:id="loginText" layoutX="175.0" layoutY="36.0" prefHeight="48.0" prefWidth="102.0" text="Inicio sesión" visible="false">
          <font>
             <Font size="18.0" />

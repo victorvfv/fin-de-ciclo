@@ -6,11 +6,13 @@ import com.example.app_lin_tem.Componentes.Controller.PeriodoController;
 import com.example.app_lin_tem.Componentes.HitoUI;
 import com.example.app_lin_tem.Componentes.Lineas;
 import com.example.app_lin_tem.Componentes.PeriodoUI;
+import com.example.app_lin_tem.Componentes.hitoLineas;
 import com.example.app_lin_tem.Model.Hito;
 import com.example.app_lin_tem.Model.JsonMaker;
 import com.example.app_lin_tem.Model.Periodo;
 import com.example.app_lin_tem.Model.Proyecto;
-import javafx.collections.FXCollections;
+import com.example.app_lin_tem.Model.firebase.*;
+import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import javafx.fxml.FXML;
 
 import javafx.fxml.FXMLLoader;
@@ -18,7 +20,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
@@ -29,9 +30,20 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.controlsfx.control.Notifications;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import retrofit2.Response;
 
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class MainViewController {
@@ -42,8 +54,13 @@ public class MainViewController {
     private HashMap<String,Node> vistas;
     private HashMap<String,PeriodoController> ControladoresPer;
     private HashMap<String,HitoController> ControladoresHit;
-    private double duracionMin=0,fechaMin,fechaMax;
+    private double duracionMin=2,fechaMin,fechaMax;
     private int i=1;
+    private String IdToken;
+    final private String APIKEY="AIzaSyDkC0ZFDN4dNcQCyaLdpRWZpUQ_p_r_O3U";
+    private fireBaseData dbApi;
+    private fireBaseAuth authApi;
+    private fireBaseTokenApi tokenApi;
 
     final private HashMap<Integer, Color> tablaColores= new HashMap<>() {
             {put(1,Color.RED);
@@ -58,7 +75,6 @@ public class MainViewController {
             put(10, Color.LIME);}
     };
 
-
     @FXML
     private HTMLEditor HTMLEditor;
 
@@ -71,8 +87,6 @@ public class MainViewController {
     @FXML
     private AnchorPane jaulaLineas;
 
-    @FXML
-    private ComboBox Buscador;
 
 
 
@@ -91,6 +105,9 @@ public class MainViewController {
         contendorLineas.setScaleY(-1);
         contendorLineas.vvalueProperty().bind(jaulaLineas.heightProperty());
         contendorLineas.hvalueProperty().bind(jaulaLineas.widthProperty());
+        dbApi=retroFitClient.databaseApi();
+        authApi=retroFitClient.authApi();
+        tokenApi=retroFitClient.tokenApi();
 
     }
 
@@ -116,49 +133,6 @@ public class MainViewController {
     }
 
     @FXML
-    private void cargarBuscador(){
-        ArrayList nombres = new ArrayList<>();
-        nombres.add("Buscador");
-        for(Periodo per:crearArrayOrdenadoLineas()){
-            nombres.add(per.getTitulo());
-            if(!per.getPeriodosDependientes().isEmpty()){
-                ArrayList<Periodo> periodosDep=per.getPeriodosDependientes();
-                periodosDep.sort((per1,per2)->{return (per1.getFecha1()-per2.getFecha1());});
-                for(Periodo perDep:periodosDep){
-                    nombres.add(" "+perDep.getTitulo());
-                }
-            }
-        }
-        for(Hito hit: hitos){
-            nombres.add(hit.getTitulo());
-        }
-        Buscador.setItems(FXCollections.observableList(nombres));
-
-    }
-
-    @FXML
-    public void buscar(){
-        Node target=null;
-        for(Periodo per:periodos){
-            if(Buscador.getValue().toString().equals(per.getTitulo())){
-                target= vistas.get(per.getId());
-            }
-        }
-        for(Hito hit : hitos){
-            if(Buscador.getValue().toString().equals(hit.getTitulo())){
-                target= vistas.get(hit.getId());
-            }
-        }
-        if(target!=null){
-            double y = target.getBoundsInParent().getMinY();
-            double altura = ScrollData.getContent().getBoundsInLocal().getHeight();
-
-            ScrollData.setVvalue(y/altura);
-            Buscador.setValue(null);
-        }
-    }
-
-    @FXML
     protected void onButtonHitoClick() throws IOException {
         HitoUI hitoUI = new HitoUI();
         VboxData.getChildren().add(hitoUI);
@@ -175,26 +149,75 @@ public class MainViewController {
 
     @FXML
     protected void onButtonCrearCLick(){
-       ScrollData.setVisible(false);
-       Buscador.setVisible(false);
+       ScrollData.setVisible(false) ;
+
        jaulaLineas.getChildren().clear();
        calcularAlturasPrimarios(crearArrayOrdenadoLineas());
 
 
        for(Periodo periodo:periodos){
-
            Lineas linea = new Lineas(periodo);
            linea.setLayoutX(getPosicion(periodo.getFecha1()));
+           if(!periodo.getHitosDependientes().isEmpty()){
+               //periodo.setAlturaMaxHit();
+           }
+
            linea.setLayoutY(periodo.getAltura());
            linea.setScaleY(-1);
            linea.ctr.setTamaño(getTamaño(periodo.getDuracion()));
 
            jaulaLineas.getChildren().add(linea);
 
-
        }
+       for(Hito hito:hitos) {
+           if(hito.getAlturaDep()==0){
+               hito.setAlturaNDep(10);
+               hito.setAltura(58);
+               for(Periodo periodo: crearArrayOrdenadoLineas()){
+                   if(hito.getFecha()>=periodo.getFecha1()&&hito.getFecha()<=periodo.getFecha2()){
+                       hito.setAltura(Math.max(hito.getAlturaDep(),periodo.getAlturaMax())-58);
+                   }
+               }
 
+           }
+            hitoLineas hitoLinea= new hitoLineas(hito);
+            double x =getPosicion(hito.getFecha());
+            double l=hitoLinea.getPrefWidth()/2;
+            x= x-(l);
 
+            hitoLinea.setLayoutX(x) ;
+            hitoLinea.setLayoutY(hito.getAltura());
+            hitoLinea.setScaleY(-1);
+
+            jaulaLineas.getChildren().add(hitoLinea);
+            hitoLinea.inicioHito(this);
+
+        }
+    }
+
+    public void sendFront(Node node){
+        node.toFront();
+    }
+
+    public void alturaHitos(){
+        for(Hito hito:hitos){hito.setAltura(0);hito.setAlturaNDep(0);}
+        for(Periodo per:crearArrayOrdenadoLineas()){
+            ArrayList<Hito> cajaHitos= new ArrayList<>();
+            for (Hito hito:hitos){
+                if(per== hito.getPadreCaja(hito.getDependencia())){
+                    hito.setAlturaDep();
+                    hito.setAltura(per.getAlturaMax());
+                    cajaHitos.add(hito);
+                }
+            }
+            for(Hito hito:cajaHitos){
+                for(Hito hit:cajaHitos){
+                    if((hito.getAltura()==hit.getAltura()&&hit.getFecha()==hito.getFecha())&&(hit!=hito)){
+                        hit.addAltura(30);
+                    }
+                }
+            }
+        }
     }
 
     public void calcularAlturasPrimarios(ArrayList<Periodo> periodosCalcular){
@@ -207,9 +230,8 @@ public class MainViewController {
                 calcularAlturaDependientes(periodo.getAltura()+58,periodo.getPeriodosDependientes());
                 periodo.setAlturaMax();
             }
-
+            alturaHitos();
         }
-
 
         for(Periodo periodo: periodosCalcular){
             ArrayList<Periodo> periodosCoincidentes= new ArrayList<>();
@@ -227,9 +249,7 @@ public class MainViewController {
 
                         periodosCoincidentes.add(per);
                     }
-
                 }
-
             }
 
             for(Periodo altura:periodosCoincidentes){
@@ -237,10 +257,8 @@ public class MainViewController {
                 if((periodo.getAltura()<=altura.getAlturaMax())){
                     altura.addAlturaColision(periodo.getAlturaMax()+78);
                     altura.setAlturaMax();
-
                 }
             }
-
         }
 
         ArrayList<Periodo> periodosCalcularInver = periodosCalcular;
@@ -271,7 +289,6 @@ public class MainViewController {
                 if((altura.getAltura()<=periodo.getAlturaMax())){
                     altura.addAlturaColision(periodo.getAlturaMax()+78);
                     altura.setAlturaMax();
-                    //System.out.println(periodo.getTitulo()+" ha hecho subir a: "+altura.getTitulo());
                 }
             }
         }
@@ -297,6 +314,7 @@ public class MainViewController {
 
     public double calcularAlturaDependientes(double alturaIni,ArrayList<Periodo> lista){
         double alturaMax=alturaIni;
+
         for(Periodo periodo: lista){
             int iter=0;
             periodo.setAltura(alturaIni);
@@ -327,7 +345,7 @@ public class MainViewController {
                     hueco=false;
                 }
             }
-            if(!periodo.getPeriodosDependientes().isEmpty()){
+            if(!periodo.getPeriodosDependientes().isEmpty()|!periodo.getHitosDependientes().isEmpty()){
                 calcularAlturaDependientes(periodo.getAltura()+58,periodo.getPeriodosDependientes());
                 periodo.setAlturaMax();
             }
@@ -342,10 +360,10 @@ public class MainViewController {
         for(Periodo per:lista){
             alturaMax=Math.max(alturaMax,per.getAlturaMax());
         }
+
+
         return alturaMax;
     }
-
-
 
     //calculo de tamaño en funcion de el periodo con menor duracion
     private double getTamaño(double Duracion){
@@ -353,13 +371,14 @@ public class MainViewController {
     }
 
     private double getPosicion(int Fecha1){
-        return Math.abs((((Fecha1)/duracionMin)*200+20)-(((fechaMin)/duracionMin)*200));
+        System.out.println(Math.abs((((Fecha1)/duracionMin)*200+20)-(((fechaMin)/duracionMin)*200)));
+        return Math.abs((((Fecha1)/duracionMin)*200+20)-(((fechaMin)/duracionMin)*200)) ;
     }
 
     @FXML
     protected void onActionBottonMostrar(){
         ScrollData.setVisible(!ScrollData.isVisible());
-        Buscador.setVisible(!Buscador.isVisible());
+
     }
 
     public ArrayList<Periodo> crearArrayOrdenadoLineas(){
@@ -373,24 +392,51 @@ public class MainViewController {
             return line1.getFecha1()-linea2.getFecha1();
         });
         return lineas;
+    }
 
+    public ArrayList<Hito> creArrayOrdenadoHito(){
+        ArrayList<Hito> ordenada= new ArrayList<>();
+        for(Hito hito : hitos){
+            if(hito.getDependencia()==null){
+                ordenada.add(hito);
+            }
+        }
+        ordenada.sort((hit1,hit2)->{
+            return hit1.getFecha() - hit2.getFecha();
+        });
+        return ordenada;
     }
 
     public String getDivPer(Periodo periodo,int pad){
+        String imagen="";
+        if(periodo.getImagen()!=null){
+            imagen="<p>"+"<img src=\"file:///"+periodo.getImagen()+"\" width=\"200\" height=\"150\">"+"</p>";
+        }
         return "<div style=\"padding-left: "+pad+"px;\" >"
 
                     +"<h3>"+"<b>"+periodo.getTitulo()+"  "+periodo.getFecha1()+"-"+periodo.getFecha2()+"</b>"+"</h3>"
-                    +"<div style=\"padding-left: "+(pad+25)+"px;\" >"
+                    +"<div style=\"padding-left: "+(35)+"px;\" >"
 
-                        +"<p>"+periodo.getDatos()+"</p>"+
-
+                        +"<p>"+periodo.getDatos()+"</p>"
+                        +imagen+
                     "</div>"+
 
                 "</div>";
     }
 
     public String getDivHit(Hito hito,int pad){
-        return "<div style=\"padding-left: "+pad+"px;\" >"+"<p>"+"<b>"+hito.getTitulo()+"</b>"+"</p>"+"</div>";
+        String imagen="";
+        if(hito.getImagen()!=null){
+            imagen="<p>"+"<img src=\"file:///"+hito.getImagen()+"\" width=\"200\" height=\"150\">"+"</p>";
+        }
+        return "<div style=\"padding-left: "+pad+"px;\" >"
+                +"<h3>"+"<b>"+hito.getTitulo()+" "+hito.getFecha()+"</b>"+"</h3>"
+                +"<div style=\"padding-left: "+(35)+"px;\" >"
+
+                +"<p>"+hito.getDatos()+"</p>"
+                +imagen+
+                "</div>"
+                +"</div>";
     }
 
     public String getTexto(Periodo periodo, int pad){
@@ -425,7 +471,7 @@ public class MainViewController {
                             iterP++;
                         }
                         else{
-                            texto=texto+"<div style=\"padding-left: "+(pad+50)+"px;\" >"+"<p>"+"<b>"+listaHit.get(iterH).getTitulo()+"</b>"+"</p>"+"</div>";
+                            texto=texto+getDivHit(listaHit.get(iterH),pad+100);
                             iterH++;
                         }
                     }
@@ -442,7 +488,7 @@ public class MainViewController {
                 }
                 if(iterH!=listaHit.size()){
                     while(iterH!=listaHit.size()){
-                        texto=texto+"<div style=\"padding-left: "+(pad+50)+"px;\" >"+"<p>"+"<b>"+listaHit.get(iterH).getTitulo()+"</b>"+"</p>"+"</div>";
+                        texto=texto+getDivHit(listaHit.get(iterH),pad+100);
                         iterH++;
                     }
                 }
@@ -466,12 +512,12 @@ public class MainViewController {
                             iterP++;
                         }
                         else{
-                            texto=texto+"<div style=\"padding-left: "+(pad+50)+"px;\" >"+"<p>"+"<b>"+listaHit.get(iterH).getTitulo()+"</b>"+"</p>"+"</div>";
+                            texto=texto+getDivHit(listaHit.get(iterH),pad+100);
                             iterH++;
                         }
                     }
                     else {
-                        texto=texto+"<div style=\"padding-left: "+(pad+50)+"px;\" >"+"<p>"+"<b>"+listaHit.get(iterH).getTitulo()+"</b>"+"</p>"+"</div>";
+                        texto=texto+getDivHit(listaHit.get(iterH),pad+100);
                         iterH++;
                     }
                 }
@@ -481,22 +527,74 @@ public class MainViewController {
     }
 
     @FXML
-    public void prueba(){
-
+    public void cargarEsquema(){
         String texto="";
         int pad=10;
         ArrayList<Periodo> listaOrdenada=crearArrayOrdenadoLineas();
         for (Periodo periodo:listaOrdenada){
-            for(Periodo per:listaOrdenada){
-                texto=texto+getTexto(per,pad);
-            }
-
-
+                texto=texto+getTexto(periodo,pad);
         }
         for(Hito dato:hitos){
 
         }
+
         HTMLEditor.setHtmlText(texto);
+
+    }
+
+    //"C:\Users\victo\OneDrive\Escritorio\"
+    private String hmlToXhtml(String Html){
+        String salida=Html;
+
+        return Html;
+    }
+    private String htmlToXhtml(final String html) {
+        String salida;
+        final Document document = Jsoup.parse(html);
+        document.outputSettings().syntax(Document.OutputSettings.Syntax.xml);
+
+        Document doc = Jsoup.parse(document.html());
+        Elements imgs= doc.select("img");
+        for(Element img:imgs){
+            String original = img.attr("src");
+
+            File file=new File(original);
+
+            String rutaAbsoluta= file.toString().replace("\\", "/");
+
+            String formatoRuta=rutaAbsoluta.replace(" ", "%20")
+                    .replace("á", "%C3%A1")
+                    .replace("é", "%C3%A9")
+                    .replace("í", "%C3%AD")
+                    .replace("ó", "%C3%B3")
+                    .replace("ú", "%C3%BA")
+                    .replace("Á", "%C3%81")
+                    .replace("É", "%C3%89")
+                    .replace("Í", "%C3%8D")
+                    .replace("Ó", "%C3%93")
+                    .replace("Ú", "%C3%9A")
+                    .replace("ñ", "%C3%B1")
+                    .replace("Ñ", "%C3%91");
+            img.attr("src",formatoRuta);
+        }
+
+        doc.outputSettings().syntax(Document.OutputSettings.Syntax.xml);
+
+        return doc.html();
+    }
+    @FXML
+    public void imprimirPdf(){
+        String html=htmlToXhtml(HTMLEditor.getHtmlText());
+        
+        try (OutputStream os = new FileOutputStream("C:\\Users\\victo\\OneDrive\\Escritorio\\documento.pdf")) {
+            PdfRendererBuilder builder = new PdfRendererBuilder();
+            builder.withHtmlContent(html, null);
+            builder.toStream(os);
+            builder.run();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     public void delVistaPer(Periodo periodo){
@@ -532,13 +630,18 @@ public class MainViewController {
     }
 
     public void setDurFchMinFchMax(double duracion,int Fch1,int Fch2){
-        duracionMin=duracion;
+        if(Fch1!=Fch2){
+        duracionMin=duracion;}
         fechaMin= Fch1;
         fechaMax=Fch2;
         for(Periodo per:periodos){
             duracionMin=Math.min(duracionMin,per.getDuracion());
             fechaMin=Math.min(fechaMin,per.getFecha1());
             fechaMax=Math.max(fechaMax,per.getFecha2());
+        }
+        for(Hito hit:hitos){
+            fechaMin=Math.min(fechaMin,hit.getFecha());
+            fechaMax=Math.max(fechaMax,hit.getFecha());
         }
     }
 
@@ -557,7 +660,7 @@ public class MainViewController {
     }
 
     @FXML
-    public void iniciarSesion(){
+    public void iniciarSesionUI(){
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/app_lin_tem/Login.fxml"));
         try {
             Parent root = loader.load();
@@ -568,6 +671,7 @@ public class MainViewController {
             stage.initModality(Modality.APPLICATION_MODAL);
             LoginController ctr= loader.getController();
             ctr.setVista(true);
+            ctr.setCtr(this);
             stage.showAndWait();
 
 
@@ -589,6 +693,7 @@ public class MainViewController {
 
             LoginController ctr= loader.getController();
             ctr.setVista(false);
+            ctr.setCtr(this);
             stage.showAndWait();
 
 
@@ -602,5 +707,88 @@ public class MainViewController {
                 .hideAfter(Duration.seconds(2))
                 .position(Pos.BOTTOM_RIGHT)
                 .showInformation();
+    }
+
+
+    public void crearSesionUI(String email,String contraseña) throws IOException {
+        AuthRequest request= new AuthRequest(email,contraseña);
+
+        Response<AuthResponse> response =
+                authApi.crearCuenta(APIKEY, request).execute();
+        AuthResponse auth = authApi.crearCuenta(APIKEY,request).execute().body();
+
+        if (response.isSuccessful() && response.body() != null) {
+            IdToken = response.body().idToken;
+            System.out.println("✅ Sesión iniciada correctamente");
+            System.out.println("Usuario: " + response.body().email);
+            return;
+        }
+
+        if (response.errorBody() != null) {
+            String errorJson = response.errorBody().string();
+
+            if (errorJson.contains("EMAIL_EXISTS")) {
+               toast("El correo ya está registrado");
+            } else if (errorJson.contains("WEAK_PASSWORD")) {
+                toast("La contraseña es demasiado débil");
+            } else if (errorJson.contains("INVALID_EMAIL")) {
+                toast("El correo no es válido");
+            } else {
+                toast("Error creando cuenta" );
+            }
+        }
+
+        else {
+            toast("Error desconocido al crear la sesión pruebe mas tarde o pongase en contanto con el servicio tecnico");
+
+        }
+
+    }
+
+    public void iniciarSesionUI(String email, String contraseña) throws IOException {
+        AuthRequest request= new AuthRequest(email,contraseña);
+
+        Response<AuthResponse> response =
+                authApi.iniciarSesion(APIKEY,request).execute();
+
+        if(response.isSuccessful()&&response.body()!=null){
+            IdToken = response.body().idToken;
+            System.out.println("✅ Sesión iniciada correctamente");
+            System.out.println("Usuario: " + response.body().email);
+            return;
+        }
+        if (response.errorBody() != null) {
+            String errorJson = response.errorBody().string();
+
+            if (errorJson.contains("INVALID_LOGIN_CREDENTIALS")) {
+                toast("El correo o la contraseña no son correrctos");
+            } else if (errorJson.contains("INVALID_PASSWORD")) {
+                toast("El correo o la contraseña no son correrctos");
+            } else if (errorJson.contains("USER_DISABLED")) {
+                toast("El usuario ha sido deshabilitado");
+            }
+        }
+
+        else {
+            toast("Error desconocido al iniciar sesión pruebe mas tarde o pongase en contanto con el servicio tecnico");
+
+        }
+    }
+
+    public void guardarDatos(){
+
+    }
+
+
+    public void actualizar(){
+
+    }
+
+    public void obtenerProyectos(){
+
+    }
+
+    public void obtenerProyecto(){
+
     }
 }

@@ -72,7 +72,7 @@ public class LineasController {
 
     @FXML
     public void Ratondentro(){
-        //ctr.opcaidad1(id);
+
         linea.setOpacity(0.75);
     }
 
@@ -81,30 +81,6 @@ public class LineasController {
         linea.setOpacity(0.5);
     }
 
-
-    public Double getRed() {
-        return red;
-    }
-
-    public void setRed(Double red) {
-        this.red = red;
-    }
-
-    public Double getBlue() {
-        return blue;
-    }
-
-    public void setBlue(Double blue) {
-        this.blue = blue;
-    }
-
-    public Double getGreen() {
-        return green;
-    }
-
-    public void setGreen(Double green) {
-        this.green = green;
-    }
 
     public void setInfo() {
         fch1.setText(""+ periodo.getFecha1());
@@ -119,7 +95,7 @@ public class LineasController {
 
     @FXML
     public void onCLick(){
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/app_lin_tem/Componentes/VistaPeriodo.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/app_lin_tem/Componentes/VistaDato.fxml"));
 
         try {
             Parent root = loader.load();
@@ -129,9 +105,9 @@ public class LineasController {
             stage.setScene(scene);
             stage.show();
 
-            VistaPeriodoController ctr=loader.getController();
-            Image image= new Image(periodo.getImagen());
-            ctr.setData(periodo.getTitulo(), periodo.getDatos(), periodo.getFecha1(), periodo.getFecha2(), periodo.getPeriodosDependientes(), image);
+            VistaDatoController ctr=loader.getController();
+            ctr.setDataPer(periodo.getTitulo(), periodo.getDatos(), periodo.getFecha1(), periodo.getFecha2(), periodo.getPeriodosDependientes(), periodo.getImagen(),periodo.getHitosDependientes());
+            ctr.cargarHtml();
         } catch (IOException _) {}
 
     }

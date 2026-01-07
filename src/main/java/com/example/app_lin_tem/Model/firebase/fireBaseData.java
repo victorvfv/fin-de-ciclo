@@ -21,6 +21,7 @@ public interface fireBaseData {
             @Query("auth") String idToken
     );
 
+    //leer proyecto
     @GET("proyectos/{id}.json")
     Call<Proyecto> getProyecto(
             @Path("id") String id,

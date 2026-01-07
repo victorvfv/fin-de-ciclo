@@ -7,6 +7,9 @@ module com.example.app_lin_tem {
     requires com.google.gson;
     requires retrofit2;
     requires retrofit2.converter.gson;
+    requires okhttp3;
+    requires openhtmltopdf.pdfbox;
+    requires org.jsoup;
 
 
     opens com.example.app_lin_tem to javafx.fxml;
@@ -24,5 +27,7 @@ module com.example.app_lin_tem {
 
     opens com.example.app_lin_tem.Model to com.google.gson;
 
+    exports com.example.app_lin_tem.Model.firebase;
+    opens com.example.app_lin_tem.Model.firebase to javafx.fxml;
 
 }

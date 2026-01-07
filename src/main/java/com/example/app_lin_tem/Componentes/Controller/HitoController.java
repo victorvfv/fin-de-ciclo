@@ -6,7 +6,9 @@ import com.example.app_lin_tem.Model.Periodo;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.stage.FileChooser;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class HitoController  {
@@ -53,6 +55,7 @@ public class HitoController  {
 
 
 
+
     public void setPeriodos(ArrayList periodos){
         this.periodos=periodos;
 
@@ -93,6 +96,7 @@ public class HitoController  {
         Dato.setText(Dato.getText()+" "+hito.getFecha());
         Dato.requestFocus();
         Pestaña.setText("Hito: "+NomHit.getText()+" "+hito.getFecha()+" ");
+        mainViewController.setDurFchMinFchMax(1.7976931348623157e+308,hito.getFecha(),hito.getFecha());
     }
 
     @FXML
@@ -156,5 +160,24 @@ public class HitoController  {
 
     public void bloqAC(Boolean estado){
         AC.setDisable(estado);
+    }
+
+    @FXML
+    protected void añadirImagen(){
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("selecciona la imagen");
+        FileChooser.ExtensionFilter imageFilter =
+                new FileChooser.ExtensionFilter(
+                        "Archivos de imagen (*.png, *.jpg, *.jpeg, *.gif)",
+                        "*.png", "*.jpg", "*.jpeg", "*.gif"
+                );
+
+        fileChooser.getExtensionFilters().add(imageFilter);
+        fileChooser.setSelectedExtensionFilter(imageFilter);
+
+        File Url =fileChooser.showOpenDialog(null);
+        if(Url!=null){
+            hito.setImagen(Url.getAbsolutePath());
+        }
     }
 }

@@ -99,7 +99,8 @@ public class Periodo {
 
     public void setDependencia(Periodo dependencia) {
         Dependencia = dependencia;
-        dependeciaId= dependencia.getId();
+        if(Dependencia!=null){
+        dependeciaId= dependencia.getId();}
     }
 
     public String getDependeciaId() {
@@ -177,14 +178,19 @@ public class Periodo {
                 periodo.addAltura((periodo.getAltura()+(añadido-alt)));
             }
         }
+        if(!hitosDependientes.isEmpty()){
+            for(Hito hito: hitosDependientes){
+                hito.setAltura(AlturaMax);
+            }
+        }
     }
 
     public String getImagen() {
         return imagen;
     }
 
-    public void setImagen(Image imagen) {
-        this.imagen = imagen.getUrl();
+    public void setImagen(String Url) {
+        this.imagen = Url.replace("\\","/");
     }
 
     public double getAlturaMax() {
@@ -199,6 +205,15 @@ public class Periodo {
                 per.setAlturaMax();
             }
         }
+        if(!hitosDependientes.isEmpty()){
+            for(Hito hito:hitosDependientes){
+                AlturaMax=Math.max(AlturaMax, hito.getAlturaDep());
+            }
+        }
+    }
+
+    public void setAlturaMaxHit(){
+        AlturaMax=AlturaMax+100;
     }
 
 }
