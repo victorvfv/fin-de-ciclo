@@ -19,7 +19,7 @@
                                   <TextField fx:id="Fecha1" layoutX="143.0" layoutY="15.0" onKeyPressed="#OnFechaKeyPress1" onKeyReleased="#OnFechaChanged1" prefHeight="26.0" prefWidth="67.0" promptText="Fecha 1" />
                                   <TextField fx:id="Fecha2" layoutX="221.0" layoutY="15.0" onAction="#OnActionFecha2" onKeyPressed="#OnFechaKeyPress2" onKeyReleased="#OnFechaChanged2" prefHeight="26.0" prefWidth="67.0" promptText="Fecha 2" />
                                   <TextArea fx:id="Dato" focusTraversable="false" layoutX="14.0" layoutY="90.0" onKeyReleased="#setDato" prefHeight="168.0" prefWidth="270.0" wrapText="true" />
-                                  <ColorPicker fx:id="Color" layoutX="14.0" layoutY="50.0" onAction="#setColor" prefHeight="26.0" prefWidth="85.0" />
+                                  <ColorPicker fx:id="color" layoutX="14.0" layoutY="50.0" onAction="#setColor" prefHeight="26.0" prefWidth="85.0" />
                               <ComboBox fx:id="Dependencias" layoutX="100.0" layoutY="50.0" onAction="#onActionComboBox" onMouseClicked="#setDependecias" prefHeight="20.0" prefWidth="184.0" />
                                   <Separator layoutX="16.0" layoutY="268.0" prefHeight="11.0" prefWidth="289.0" AnchorPane.bottomAnchor="-4.800000000000011" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                               <Text layoutX="197.0" layoutY="39.2193359375" strokeType="OUTSIDE" strokeWidth="0.0" text="-" textAlignment="CENTER" wrappingWidth="16.79889941215515" AnchorPane.rightAnchor="160.6" AnchorPane.topAnchor="1.5">

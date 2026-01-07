@@ -78,6 +78,50 @@ public class VistaDatoController {
 
     }
 
+    public void setDataHit(String titulo,String data,int fecha,String imagen){
+        html="<!DOCTYPE html>\n" +
+                "<html lang=\"en\">\n" +
+                "<head>\n" +
+                "    <meta charset=\"UTF-8\">\n" +
+                "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n" +
+                "    <title>"+titulo+"</title>\n" +
+                "    <style>\n" +
+                "        body {\n" +
+                "            text-align: center;\n" +
+                "        }\n" +
+                "\n" +
+                "        .clase1 {\n" +
+                "            padding: 50px;\n" +
+                "            text-align: justify;\n" +
+                "        }\n" +
+                "\n" +
+                "        #contenedor {\n" +
+                "            display: flex;\n" +
+                "            flex-direction: row;\n" +
+                "            flex-wrap: wrap;\n" +
+                "        }\n" +
+                "\n" +
+                "        #contenedor > div {\n" +
+                "            width: 50%;\n" +
+                "        }\n" +
+                "    </style>\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "    <h1>"+titulo+" "+fecha+"</h1>\n" +
+                "   <div class=\"clase1\"><p>"+data+"</p></div>\n" +
+                "    <img src=\"file:///"+imagen+"\" alt=\"\">\n" +
+                "   \n" +
+                " \n" +
+
+
+                "</div>\n" +
+                "\n" +
+                "</div>\n" +
+                "</body>\n" +
+                "</html>";
+
+    }
+
     public void cargarHtml(){
         Vista.getEngine().loadContent(html);
     }

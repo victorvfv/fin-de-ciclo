@@ -4,8 +4,14 @@ import com.example.app_lin_tem.Componentes.hitoLineas;
 import com.example.app_lin_tem.Controllers.MainViewController;
 import com.example.app_lin_tem.Model.Hito;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.shape.Line;
+import javafx.stage.Stage;
+
+import java.io.IOException;
 
 
 public class hitoLineasController {
@@ -45,6 +51,24 @@ public class hitoLineasController {
         linea.setStartY(-hito.getAlturaDep());
     }
 
+    @FXML
+    public void onCLick(){
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/app_lin_tem/Componentes/VistaDato.fxml"));
+
+        try {
+            Parent root = loader.load();
+
+            Scene scene = new Scene(root);
+            Stage stage = new Stage();
+            stage.setScene(scene);
+            stage.show();
+
+            VistaDatoController ctr=loader.getController();
+            ctr.setDataHit(hito.getTitulo(), hito.getDatos(), hito.getFecha(), hito.getImagen());
+            ctr.cargarHtml();
+        } catch (IOException _) {}
+
+    }
 
 
     @FXML

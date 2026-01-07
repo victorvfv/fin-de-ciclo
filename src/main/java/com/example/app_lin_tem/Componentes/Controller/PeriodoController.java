@@ -23,7 +23,7 @@ public class PeriodoController {
     private TextArea Dato;
 
     @FXML
-    private ColorPicker Color;
+    private ColorPicker color;
 
     @FXML
     private TextField Fecha1;
@@ -37,6 +37,16 @@ public class PeriodoController {
     @FXML
     private TitledPane Pestaña;
 
+    public void setDatos(){
+        NomPer.setText(periodo.getTitulo());
+        Dato.setText(periodo.getDatos());
+        Fecha1.setText(periodo.getFecha1()+"");
+        Fecha2.setText(periodo.getFecha2()+"");
+        try{
+        Dependencias.setValue(periodo.getDependencia().getTitulo());}catch (NullPointerException _){}
+        Pestaña.setText("Perido: "+periodo.getTitulo()+" "+periodo.getFecha1()+"-"+periodo.getFecha2());
+        color.setValue((Color.web(periodo.getColor())));
+    }
 
     private Periodo periodo;
 
@@ -51,6 +61,10 @@ public class PeriodoController {
         periodos = new ArrayList<>();
 
 
+    }
+
+    public void setPeriodo(Periodo periodo) {
+        this.periodo = periodo;
     }
 
     public void setMainViewController(MainViewController mainViewController){
@@ -157,7 +171,7 @@ public class PeriodoController {
 
     @FXML
     protected void setColor(){
-        periodo.setColor(Color.getValue());
+        periodo.setColor(color.getValue());
     }
 
     @FXML
@@ -194,7 +208,6 @@ public class PeriodoController {
 
 
     }
-
 
     @FXML
     public void setDependecias(){
@@ -250,7 +263,7 @@ public class PeriodoController {
     }
 
     public void newColor(Color color){
-        Color.setValue(color);
+        this.color.setValue(color);
         periodo.setColor(color);
     }
 
@@ -282,8 +295,8 @@ public class PeriodoController {
         fileChooser.setTitle("selecciona la imagen");
         FileChooser.ExtensionFilter imageFilter =
                 new FileChooser.ExtensionFilter(
-                        "Archivos de imagen (*.png, *.jpg, *.jpeg, *.gif)",
-                        "*.png", "*.jpg", "*.jpeg", "*.gif"
+                        "Archivos de imagen (*.png, *.jpg, *.jpeg)",
+                        "*.png", "*.jpg", "*.jpeg"
                 );
 
         fileChooser.getExtensionFilters().add(imageFilter);
@@ -294,4 +307,6 @@ public class PeriodoController {
             periodo.setImagen(Url.getAbsolutePath());
         }
     }
+
+
 }

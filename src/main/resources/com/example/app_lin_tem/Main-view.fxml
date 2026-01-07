@@ -10,6 +10,7 @@
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 <?import javafx.scene.web.HTMLEditor?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@css/fichaEstilo1.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.app_lin_tem.Controllers.MainViewController">
@@ -39,12 +40,15 @@
       </SplitPane>
       <ToolBar prefHeight="40.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
-            <TextField />
+            <TextField fx:id="NomProyecto" onKeyTyped="#onKeyPressNomProyecto" promptText="Nombre proyecto">
+               <font>
+                  <Font size="14.0" />
+               </font></TextField>
             <MenuBar>
               <menus>
                 <Menu mnemonicParsing="false" text="Guardar">
                   <items>
-                    <MenuItem mnemonicParsing="false" onAction="#Guardar" text="Guardar local" />
+                    <MenuItem mnemonicParsing="false" onAction="#GuardarLocal" text="Guardar local" />
                         <MenuItem mnemonicParsing="false" text="Guardar en la nube" />
                   </items>
                 </Menu>
@@ -52,28 +56,33 @@
                     <items>
                         <Menu mnemonicParsing="false" text="Cargar archivo nuevo">
                           <items>
-                            <MenuItem mnemonicParsing="false" onAction="#Guardar" text="Local" />
+                            <MenuItem mnemonicParsing="false" onAction="#cargarLocal" text="Local" />
                             <MenuItem mnemonicParsing="false" text="Desde la nube" />
                           </items>
                         </Menu>
                         <Menu mnemonicParsing="false" text="Añadir archivo">
                           <items>
-                            <MenuItem mnemonicParsing="false" text="Local" />
+                            <MenuItem mnemonicParsing="false" onAction="#anadirLocal" text="Local" />
                               <MenuItem mnemonicParsing="false" text="Desde la nube" />
                           </items>
                         </Menu>
                     </items>
                   </Menu>
+                  <Menu mnemonicParsing="false" text="Imprimir">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#imprimirPdf" text="Esquema" />
+                      <MenuItem mnemonicParsing="false" onAction="#imprimirLinea" text="Linea" />
+                    </items>
+                  </Menu>
               </menus>
             </MenuBar>
-            <Button mnemonicParsing="false" onAction="#cargarEsquema" text="Cargar" />
             <Button fx:id="BtnPer" mnemonicParsing="false" onAction="#onButtonPeridoClick" text="Periodo" />
             <Button fx:id="BtnHit" mnemonicParsing="false" onAction="#onButtonHitoClick" text="Hito" />
+            <Button mnemonicParsing="false" onAction="#cargarEsquema" text="Esquema" />
             <Button mnemonicParsing="false" onAction="#onButtonCrearCLick" text="Crear Linea" />
             <Button mnemonicParsing="false" onAction="#onActionBottonMostrar" text="Mostrar" />
             <Button mnemonicParsing="false" onAction="#iniciarSesionUI" text="Iniciar sesion" />
             <Button mnemonicParsing="false" onAction="#crearSesion" text="Crear sesion" />
-            <Button mnemonicParsing="false" onAction="#imprimirPdf" text="Imprimir" />
         </items>
       </ToolBar>
    </children>

@@ -13,6 +13,7 @@ import com.example.app_lin_tem.Model.Periodo;
 import com.example.app_lin_tem.Model.Proyecto;
 import com.example.app_lin_tem.Model.firebase.*;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 
 import javafx.fxml.FXMLLoader;
@@ -20,7 +21,10 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -37,20 +41,17 @@ import org.jsoup.select.Elements;
 import retrofit2.Response;
 
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.URI;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+import javax.imageio.ImageIO;
+import java.io.*;
 import java.util.*;
 
 public class MainViewController {
 
 
+
     private ArrayList<Periodo> periodos;
     private ArrayList<Hito> hitos;
+    private Proyecto proyectoActual;
     private HashMap<String,Node> vistas;
     private HashMap<String,PeriodoController> ControladoresPer;
     private HashMap<String,HitoController> ControladoresHit;
@@ -87,13 +88,15 @@ public class MainViewController {
     @FXML
     private AnchorPane jaulaLineas;
 
+    @FXML
+    public TextField NomProyecto;
 
 
 
     public MainViewController(){
         periodos= new ArrayList<Periodo>();
-
         hitos= new ArrayList<Hito>();
+        proyectoActual= new Proyecto(UUID.randomUUID().toString(),"Sin nombre",periodos,hitos);
         vistas= new HashMap<>();
         ControladoresPer= new HashMap<>();
         ControladoresHit= new HashMap<>();
@@ -108,7 +111,19 @@ public class MainViewController {
         dbApi=retroFitClient.databaseApi();
         authApi=retroFitClient.authApi();
         tokenApi=retroFitClient.tokenApi();
+        NomProyecto.setText("Sin nombre");
 
+    }
+
+    @FXML
+    protected void onKeyPressNomProyecto(){
+        if(!NomProyecto.getText().equals("")){
+            proyectoActual.setNombre(NomProyecto.getText());
+        }
+        else{
+            proyectoActual.setNombre("Sin nombre");
+            NomProyecto.setText("Sin nombre");
+        }
     }
 
     @FXML
@@ -167,7 +182,7 @@ public class MainViewController {
            linea.ctr.setTamaño(getTamaño(periodo.getDuracion()));
 
            jaulaLineas.getChildren().add(linea);
-
+           setDurFchMinFchMax(periodo.getDuracion(),periodo.getFecha1(),periodo.getFecha2());
        }
        for(Hito hito:hitos) {
            if(hito.getAlturaDep()==0){
@@ -175,10 +190,15 @@ public class MainViewController {
                hito.setAltura(58);
                for(Periodo periodo: crearArrayOrdenadoLineas()){
                    if(hito.getFecha()>=periodo.getFecha1()&&hito.getFecha()<=periodo.getFecha2()){
-                       hito.setAltura(Math.max(hito.getAlturaDep(),periodo.getAlturaMax())-58);
+                       hito.setAltura(Math.max(hito.getAlturaDep(),periodo.getAlturaMax()-78));
+                       hito.setAlturaNDep(-10);
+                       if(hito.getAltura()==0){
+                           hito.setAltura(58);
+                           hito.setAlturaNDep(10);
+                       }
                    }
                }
-
+                setDurFchMinFchMax(0.0,hito.getFecha(),hito.getFecha());
            }
             hitoLineas hitoLinea= new hitoLineas(hito);
             double x =getPosicion(hito.getFecha());
@@ -279,7 +299,7 @@ public class MainViewController {
                     //per que la primera fecha es compartida por el periodo
                     if(((f2E>f1p)&(f2E<=f2p))&&(periodo.getAltura()<=per.getAlturaMax())){
                         periodosCoincidentes.add(per);
-                        System.out.println(periodo.getTitulo()+" tiene a: "+per.getTitulo()+" dentro");
+
                     }
                 }
             }
@@ -294,23 +314,6 @@ public class MainViewController {
         }
     }
 
-    private void anadidoColisiones(Periodo periodo,ArrayList<Periodo> periodosCoincidentes){
-        for (Periodo per:periodosCoincidentes){
-            double dato1=per.getAltura();
-            double dato2=periodo.getAlturaMax()+78;
-
-            if((dato1<=dato2)&&(per!=periodo)){
-                per.addAlturaColision((((per.getAltura()+periodo.getAlturaMax())+20)-(periodo.getAlturaMax())));
-                per.setAlturaMax();
-
-                ArrayList<Periodo> salida = new ArrayList<>();
-                salida.addAll(periodosCoincidentes);
-                salida.remove(per);
-
-                anadidoColisiones(per,salida);
-            }
-        }
-    }
 
     public double calcularAlturaDependientes(double alturaIni,ArrayList<Periodo> lista){
         double alturaMax=alturaIni;
@@ -371,7 +374,7 @@ public class MainViewController {
     }
 
     private double getPosicion(int Fecha1){
-        System.out.println(Math.abs((((Fecha1)/duracionMin)*200+20)-(((fechaMin)/duracionMin)*200)));
+
         return Math.abs((((Fecha1)/duracionMin)*200+20)-(((fechaMin)/duracionMin)*200)) ;
     }
 
@@ -442,7 +445,6 @@ public class MainViewController {
     public String getTexto(Periodo periodo, int pad){
         String texto="";
         texto=getDivPer(periodo,pad);
-        //texto="<div style=\"padding-left: "+pad+"px;\" >"+"<p>"+"<b>"+periodo.getTitulo()+"</b>"+"</p>"+"</div>";
         if(!periodo.getHitosDependientes().isEmpty()||!periodo.getPeriodosDependientes().isEmpty()){
 
             ArrayList<Hito> listaHit = periodo.getHitosDependientes();
@@ -530,26 +532,38 @@ public class MainViewController {
     public void cargarEsquema(){
         String texto="";
         int pad=10;
-        ArrayList<Periodo> listaOrdenada=crearArrayOrdenadoLineas();
-        for (Periodo periodo:listaOrdenada){
-                texto=texto+getTexto(periodo,pad);
-        }
-        for(Hito dato:hitos){
+        ArrayList<Periodo> listPer=crearArrayOrdenadoLineas();
+        ArrayList<Hito> listHit=creArrayOrdenadoHito();
+        //hay mas Hitos
+        int iterP=0,iterH=0,fchAntMen;
+        while (iterP < listPer.size() && iterH < listHit.size()){
+            fchAntMen=Math.min(listPer.get(iterP).getFecha1(),listHit.get(iterH).getFecha());
 
+            if(listPer.get(iterP).getFecha1()==fchAntMen){
+                texto=texto+getTexto(listPer.get(iterP),pad);
+                iterP++;
+            }
+            else{
+                texto=texto+getDivHit(listHit.get(iterH),pad);
+                iterH++;
+            }
         }
+        while (iterP < listPer.size()){
+            texto=texto+getTexto(listPer.get(iterP),pad);
+            iterP++;
+        }
+        while(iterH < listHit.size()){
+            texto=texto+getDivHit(listHit.get(iterH),pad);
+            iterH++;
+        }
+
+
 
         HTMLEditor.setHtmlText(texto);
 
     }
 
-    //"C:\Users\victo\OneDrive\Escritorio\"
-    private String hmlToXhtml(String Html){
-        String salida=Html;
-
-        return Html;
-    }
     private String htmlToXhtml(final String html) {
-        String salida;
         final Document document = Jsoup.parse(html);
         document.outputSettings().syntax(Document.OutputSettings.Syntax.xml);
 
@@ -584,17 +598,64 @@ public class MainViewController {
     }
     @FXML
     public void imprimirPdf(){
-        String html=htmlToXhtml(HTMLEditor.getHtmlText());
-        
-        try (OutputStream os = new FileOutputStream("C:\\Users\\victo\\OneDrive\\Escritorio\\documento.pdf")) {
-            PdfRendererBuilder builder = new PdfRendererBuilder();
-            builder.withHtmlContent(html, null);
-            builder.toStream(os);
-            builder.run();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("selecciona el fichero");
+        FileChooser.ExtensionFilter imageFilter =
+                new FileChooser.ExtensionFilter(
+                        "Archivos pdf (*.pdf)",
+                        "*.pdf"
+                );
 
+        fileChooser.getExtensionFilters().add(imageFilter);
+        fileChooser.setSelectedExtensionFilter(imageFilter);
+        fileChooser.setInitialFileName(proyectoActual.getNombre()+".pdf");
+        File file = fileChooser.showSaveDialog(null);
+        try {
+            if (!file.toString().endsWith(".pdf")) {
+                file = new File(file.toString() + ".pdf");
+            }
+            String html = htmlToXhtml(HTMLEditor.getHtmlText());
+
+            try (OutputStream os = new FileOutputStream(file)) {
+                PdfRendererBuilder builder = new PdfRendererBuilder();
+                builder.withHtmlContent(html, null);
+                builder.toStream(os);
+                builder.run();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }catch (NullPointerException _){}
+    }
+
+    @FXML
+    public void imprimirLinea(){
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("selecciona el fichero");
+        FileChooser.ExtensionFilter imageFilter =
+                new FileChooser.ExtensionFilter(
+                        "Archivos de imagen (*.png)",
+                        "*.png"
+                );
+
+        fileChooser.getExtensionFilters().add(imageFilter);
+        fileChooser.setSelectedExtensionFilter(imageFilter);
+        fileChooser.setInitialFileName(proyectoActual.getNombre()+".png");
+        File file = fileChooser.showSaveDialog(null);
+        try {
+        if(!file.toString().endsWith(".png")){
+            file= new File(file.toString()+".png");
+        }
+        SnapshotParameters parameters = new SnapshotParameters();
+        WritableImage imagen= new WritableImage((int)jaulaLineas.getWidth(),(int)jaulaLineas.getHeight());
+
+        jaulaLineas.setScaleY(-1);
+        jaulaLineas.snapshot(parameters,imagen);
+
+        try {
+            ImageIO.write(SwingFXUtils.fromFXImage(imagen,null),"png",file);
+        } catch (IOException _) {}
+        jaulaLineas.setScaleY(1);
+        }catch (NullPointerException _){}
     }
 
     public void delVistaPer(Periodo periodo){
@@ -650,13 +711,169 @@ public class MainViewController {
     }
 
     @FXML
-    public void Guardar(){
+    public void GuardarLocal(){
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("selecciona el fichero");
-        fileChooser.showOpenDialog(null);
-        Proyecto proyecto = new Proyecto("1","Hola",periodos,hitos);
-        JsonMaker gson = new JsonMaker();
-        System.out.println( gson.getJson(proyecto));
+        FileChooser.ExtensionFilter imageFilter =
+                new FileChooser.ExtensionFilter(
+                        "Archivos de linea tiempo (*.json)",
+                        "*.json"
+                );
+        fileChooser.getExtensionFilters().add(imageFilter);
+        fileChooser.setSelectedExtensionFilter(imageFilter);
+        fileChooser.setInitialFileName(proyectoActual.getNombre()+".json");
+        File file = fileChooser.showSaveDialog(null);
+        try {
+            if(!file.toString().endsWith(".json")){
+                file= new File(file.toString()+".json");
+            }
+            JsonMaker gson = new JsonMaker();
+            BufferedWriter fichero = new BufferedWriter(new FileWriter(file));
+            fichero.write(gson.getJson(proyectoActual));
+            fichero.close();
+        }catch (NullPointerException _){} catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @FXML
+    public void cargarLocal(){
+       proyectoCargado( cargarJson());
+       rellenarVbox(proyectoActual.getPeriodos(),proyectoActual.getHitos());
+    }
+
+    @FXML
+    public void anadirLocal(){
+        Proyecto proyecto = cargarJson();
+        if(proyecto!=null){
+            for(Periodo periodo:proyecto.getPeriodos()){
+                for(Periodo per:periodos){
+                    if(periodo.getId().equals(per.getId())){
+                        periodo.setId(UUID.randomUUID().toString());
+                    }
+                }
+            }
+            periodos.addAll(proyecto.getPeriodos());
+            for(Hito hito:proyecto.getHitos()){
+                for(Hito hit:hitos){
+                    if(hito.getId().equals(hit.getId())){
+                        hito.setId(UUID.randomUUID().toString());
+                    }
+                }
+            }
+            hitos.addAll(proyecto.getHitos());
+            VboxData.getChildren().clear();
+            jaulaLineas.getChildren().clear();
+            rellenarVbox(periodos,hitos);
+        }
+    }
+
+    public void proyectoCargado(Proyecto proyecto){
+        VboxData.getChildren().clear();
+        jaulaLineas.getChildren().clear();
+
+        proyectoActual=proyecto;
+        NomProyecto.setText(proyectoActual.getNombre());
+        periodos=proyectoActual.getPeriodos();
+        hitos=proyectoActual.getHitos();
+        asignarDependecias(proyectoActual.getPeriodos(),proyectoActual.getHitos());
+    }
+
+    public void rellenarVbox(ArrayList<Periodo> listaPeriodos,ArrayList<Hito> listaHitos){
+        listaPeriodos.sort((per1,per2)->{
+            return per1.getFecha1()-per2.getFecha1();
+        });
+        listaHitos.sort((hit1,hit2)->{
+            return hit1.getFecha()-hit2.getFecha();
+        });
+        for(Periodo periodo:listaPeriodos){
+            PeriodoUI periodoUI = new PeriodoUI();
+            VboxData.getChildren().add(periodoUI);
+
+
+            PeriodoController periodoController = periodoUI.ctr;
+
+            vistas.put(periodoController.getPeriodo().getId(),periodoUI);
+            ControladoresPer.put(periodoController.getPeriodo().getId(),periodoController);
+
+
+            periodoController.setMainViewController(this);
+            periodoController.setPeriodos(periodos);
+            periodoController.setPeriodo(periodo);
+            periodoController.setDatos();
+        }
+
+        for(Hito hito:listaHitos){
+            HitoUI hitoUI = new HitoUI();
+            VboxData.getChildren().add(hitoUI);
+
+            HitoController hitoController = hitoUI.ctr;
+
+            vistas.put(hitoController.getHito().getId(),hitoUI);
+            ControladoresHit.put(hitoController.getHito().getId(),hitoController);
+
+            hitoController.setMainViewController(this);
+            hitoController.setHito(hito);
+            hitoController.setDatos();
+            hitoController.setPeriodos(periodos);
+
+        }
+    }
+
+    public void asignarDependecias(ArrayList<Periodo> listaPeriodos,ArrayList<Hito> listaHitos){
+        for(Periodo periodo: listaPeriodos){
+            for (Periodo per : listaPeriodos){
+                try{
+                if(periodo.getIdDependientes().contains(per.getId())){
+                    periodo.getPeriodosDependientes().add(per);
+                }}catch (NullPointerException _){}
+                try{
+                if(periodo.getDependeciaId().equals(per.getId())){
+                    periodo.setDependencia(per);
+                }}catch (NullPointerException _){}
+            }
+            for(Hito hito:listaHitos){
+                try{
+                if(periodo.getIdHitos().contains(hito.getId())){
+                    periodo.getHitosDependientes().add(hito);
+                    hito.setDependencia(periodo);
+                }}catch (NullPointerException _){}
+            }
+        }
+    }
+
+    public Proyecto cargarJson(){
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("selecciona el fichero");
+        FileChooser.ExtensionFilter imageFilter =
+                new FileChooser.ExtensionFilter(
+                        "Archivos de linea tiempo (*.json)",
+                        "*.json"
+                );
+        fileChooser.getExtensionFilters().add(imageFilter);
+        fileChooser.setSelectedExtensionFilter(imageFilter);
+        fileChooser.setInitialFileName(proyectoActual.getNombre()+".json");
+        File file = fileChooser.showOpenDialog(null);
+        try {
+            String json="";
+            String linea="";
+            JsonMaker gson = new JsonMaker();
+            BufferedReader lector= new BufferedReader(new FileReader(file));
+            while ((linea=lector.readLine())!=null){
+                json+=linea;
+            }
+            Proyecto proyecto= gson.getProyecto(json);
+            if(proyecto==null){
+                toast("Error al cargar el proyecto");
+            }
+            return proyecto;
+        }catch (NullPointerException _){} catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        toast("Error al cargar el proyecto");
+        return null;
     }
 
     @FXML
@@ -676,7 +893,15 @@ public class MainViewController {
 
 
 
-        } catch (IOException e) {System.out.println(e);}
+        } catch (IOException e) {}
+    }
+
+    public void toast(String texto){
+        Notifications.create()
+                .text(texto)
+                .hideAfter(Duration.seconds(2))
+                .position(Pos.BOTTOM_RIGHT)
+                .showInformation();
     }
 
     @FXML
@@ -698,17 +923,8 @@ public class MainViewController {
 
 
 
-        } catch (IOException e) {System.out.println(e);}
+        } catch (IOException e) {}
     }
-
-    public void toast(String texto){
-        Notifications.create()
-                .text(texto)
-                .hideAfter(Duration.seconds(2))
-                .position(Pos.BOTTOM_RIGHT)
-                .showInformation();
-    }
-
 
     public void crearSesionUI(String email,String contraseña) throws IOException {
         AuthRequest request= new AuthRequest(email,contraseña);
@@ -719,8 +935,8 @@ public class MainViewController {
 
         if (response.isSuccessful() && response.body() != null) {
             IdToken = response.body().idToken;
-            System.out.println("✅ Sesión iniciada correctamente");
-            System.out.println("Usuario: " + response.body().email);
+            toast("Sesión iniciada correctamente");
+            toast("Usuario: " + response.body().email);
             return;
         }
 
@@ -753,8 +969,8 @@ public class MainViewController {
 
         if(response.isSuccessful()&&response.body()!=null){
             IdToken = response.body().idToken;
-            System.out.println("✅ Sesión iniciada correctamente");
-            System.out.println("Usuario: " + response.body().email);
+            toast("Sesión iniciada correctamente");
+            toast("Usuario: " + response.body().email);
             return;
         }
         if (response.errorBody() != null) {

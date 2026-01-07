@@ -48,6 +48,22 @@ public class Periodo {
         Id=id;
     }
 
+    public HashSet<String> getIdDependientes() {
+        return IdDependientes;
+    }
+
+    public void setIdDependientes(HashSet<String> idDependientes) {
+        IdDependientes = idDependientes;
+    }
+
+    public HashSet<String> getIdHitos() {
+        return IdHitos;
+    }
+
+    public void setIdHitos(HashSet<String> idHitos) {
+        IdHitos = idHitos;
+    }
+
     public String getTitulo() {
         return Titulo;
     }
@@ -216,4 +232,7 @@ public class Periodo {
         AlturaMax=AlturaMax+100;
     }
 
+    public void setId(String id) {
+        Id = id;
+    }
 }

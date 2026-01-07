@@ -10,6 +10,7 @@ module com.example.app_lin_tem {
     requires okhttp3;
     requires openhtmltopdf.pdfbox;
     requires org.jsoup;
+    requires javafx.swing;
 
 
     opens com.example.app_lin_tem to javafx.fxml;

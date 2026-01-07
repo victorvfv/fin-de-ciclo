@@ -6,6 +6,7 @@ import com.example.app_lin_tem.Model.Periodo;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 
 import java.io.File;
@@ -18,9 +19,6 @@ public class HitoController  {
 
     @FXML
     private TextArea Dato;
-
-    @FXML
-    private ColorPicker Color;
 
     @FXML
     private ComboBox Dependencias;
@@ -47,14 +45,25 @@ public class HitoController  {
         periodos = new ArrayList<Periodo>();
     }
 
+    public void setDatos(){
+        NomHit.setText(hito.getTitulo());
+        Dato.setText(hito.getDatos());
+        Fecha.setText(hito.getFecha()+"");
+        try{
+            Dependencias.setValue(hito.getDependencia().getTitulo());}catch (NullPointerException _){}
+        Pestaña.setText("Perido: "+hito.getTitulo()+" "+hito.getFecha());
+
+    }
+
+    public void setHito(Hito hito) {
+        this.hito = hito;
+    }
+
     public void setMainViewController(MainViewController mainViewController){
         this.mainViewController = mainViewController;
         NomHit.requestFocus();
 
     }
-
-
-
 
     public void setPeriodos(ArrayList periodos){
         this.periodos=periodos;
@@ -126,7 +135,6 @@ public class HitoController  {
 
     }
 
-
     @FXML
     protected void onActionComboBox() {
         for (Periodo periodo1 : periodos) {
@@ -142,7 +150,6 @@ public class HitoController  {
             }
         }
     }
-
 
     @FXML
     public void eliminar(){
@@ -168,8 +175,8 @@ public class HitoController  {
         fileChooser.setTitle("selecciona la imagen");
         FileChooser.ExtensionFilter imageFilter =
                 new FileChooser.ExtensionFilter(
-                        "Archivos de imagen (*.png, *.jpg, *.jpeg, *.gif)",
-                        "*.png", "*.jpg", "*.jpeg", "*.gif"
+                        "Archivos de imagen (*.png, *.jpg, *.jpeg)",
+                        "*.png", "*.jpg", "*.jpeg"
                 );
 
         fileChooser.getExtensionFilters().add(imageFilter);

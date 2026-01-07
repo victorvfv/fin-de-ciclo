@@ -49,4 +49,20 @@ public class Proyecto {
     public void setHitos(ArrayList<Hito> hitos) {
         this.hitos = hitos;
     }
+
+    public boolean isSaveFire() {
+        return saveFire;
+    }
+
+    public void setSaveFire(boolean saveFire) {
+        this.saveFire = saveFire;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
 }
