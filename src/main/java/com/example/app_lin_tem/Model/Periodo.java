@@ -25,13 +25,13 @@ public class Periodo {
 
     public Periodo() {
         Titulo="";
-        Fecha1=0;
-        Fecha2=0;
+        Fecha1=1;
+        Fecha2=2;
         Datos="";
         Id= UUID.randomUUID().toString();
         periodosDependientes = new ArrayList<>();
         hitosDependientes= new ArrayList<>();
-        Duracion=0;
+        Duracion=1;
         imagen = null;
         Altura=0;
         AlturaMax=0;

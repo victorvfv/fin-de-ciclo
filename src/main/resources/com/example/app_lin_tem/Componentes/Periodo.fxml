@@ -15,7 +15,7 @@
                      <content>
                           <AnchorPane prefHeight="266.0" prefWidth="278.0">
                               <children>
-                                  <TextField fx:id="NomPer" layoutX="14.0" layoutY="14.0" onAction="#OnActionTitulo" onDragExited="#OnActionTitulo" prefHeight="26.0" prefWidth="119.0" promptText="Titulo" />
+                                  <TextField fx:id="NomPer" layoutX="14.0" layoutY="14.0" onAction="#OnActionTitulo" onDragExited="#OnActionTitulo" onKeyReleased="#setTitulo" prefHeight="26.0" prefWidth="119.0" promptText="Titulo" />
                                   <TextField fx:id="Fecha1" layoutX="143.0" layoutY="15.0" onKeyPressed="#OnFechaKeyPress1" onKeyReleased="#OnFechaChanged1" prefHeight="26.0" prefWidth="67.0" promptText="Fecha 1" />
                                   <TextField fx:id="Fecha2" layoutX="221.0" layoutY="15.0" onAction="#OnActionFecha2" onKeyPressed="#OnFechaKeyPress2" onKeyReleased="#OnFechaChanged2" prefHeight="26.0" prefWidth="67.0" promptText="Fecha 2" />
                                   <TextArea fx:id="Dato" focusTraversable="false" layoutX="14.0" layoutY="90.0" onKeyReleased="#setDato" prefHeight="168.0" prefWidth="270.0" wrapText="true" />

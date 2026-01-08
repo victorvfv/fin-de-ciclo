@@ -7,6 +7,6 @@
 <AnchorPane prefHeight="30.0" prefWidth="186.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.app_lin_tem.Componentes.Controller.ProyectosNubeBtnController">
    <children>
       <Button fx:id="btnProyecto" layoutY="2.0" mnemonicParsing="false" onAction="#cargarProyecto" prefHeight="28.0" prefWidth="145.0" text="Button" />
-      <Button alignment="CENTER" contentDisplay="CENTER" layoutX="146.0" layoutY="2.0" mnemonicParsing="false" prefHeight="28.0" prefWidth="42.0" text="🗑" textAlignment="CENTER" />
+      <Button fx:id="btnDel" alignment="CENTER" contentDisplay="CENTER" layoutX="146.0" layoutY="2.0" mnemonicParsing="false" onAction="#eliminarProyecto" prefHeight="28.0" prefWidth="42.0" text="🗑" textAlignment="CENTER" />
    </children>
 </AnchorPane>

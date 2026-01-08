@@ -13,13 +13,13 @@
                      <content>
                           <AnchorPane prefHeight="274.0" prefWidth="376.0">
                               <children>
-                                  <TextField fx:id="NomHit" layoutX="14.0" layoutY="14.0" onAction="#OnActionTitulo" prefHeight="26.0" prefWidth="119.0" promptText="Titulo" />
+                                  <TextField fx:id="NomHit" layoutX="14.0" layoutY="14.0" onAction="#OnActionTitulo" onKeyReleased="#setTitulo" prefHeight="26.0" prefWidth="119.0" promptText="Titulo" />
                                   <TextField fx:id="Fecha" layoutX="144.0" layoutY="14.0" onAction="#OnActionFecha" onKeyPressed="#OnFechaKeyPress" onKeyReleased="#OnFechaChanged" prefHeight="26.0" prefWidth="67.0" promptText="Fecha" />
-                                  <TextArea fx:id="Dato" layoutX="13.0" layoutY="92.0" prefHeight="168.0" prefWidth="270.0" wrapText="true" />
+                                  <TextArea fx:id="Dato" layoutX="13.0" layoutY="92.0" onKeyReleased="#setDato" prefHeight="168.0" prefWidth="270.0" wrapText="true" />
                                   <Separator layoutX="9.0" layoutY="268.0" prefHeight="11.0" prefWidth="289.0" AnchorPane.bottomAnchor="-4.800000000000011" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                               <ComboBox fx:id="Dependencias" layoutX="14.0" layoutY="51.0" onAction="#onActionComboBox" onMouseClicked="#setDependecias" prefHeight="23.0" prefWidth="268.0" />
-                              <Button layoutX="222.0" layoutY="14.0" mnemonicParsing="false" onAction="#eliminar" text="Eliminar" />
-                              <CheckBox fx:id="AC" layoutX="297.0" layoutY="18.0" mnemonicParsing="false" onAction="#OnActionAC" text="A.C." />
+                              <Button layoutX="291.0" layoutY="14.0" mnemonicParsing="false" onAction="#eliminar" text="Eliminar" />
+                              <CheckBox fx:id="AC" layoutX="229.0" layoutY="20.0" mnemonicParsing="false" onAction="#OnActionAC" text="A.C." />
             <Button layoutX="293.0" layoutY="52.0" mnemonicParsing="false" onAction="#añadirImagen" text="Imagen" />
                               </children>
                           </AnchorPane>

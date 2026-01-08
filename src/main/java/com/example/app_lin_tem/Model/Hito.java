@@ -18,7 +18,7 @@ public class Hito {
     public Hito() {
         Id = UUID.randomUUID().toString();
         Titulo = "";
-        Fecha = 0;
+        Fecha = 1;
         Datos = "";
     }
 
@@ -60,7 +60,8 @@ public class Hito {
 
     public void setDependencia(Periodo dependencia) {
         Dependencia = dependencia;
-        dependenciaId = dependencia.getId();
+        if(dependencia!=null){
+        dependenciaId = dependencia.getId();}
     }
 
     public String getId() {

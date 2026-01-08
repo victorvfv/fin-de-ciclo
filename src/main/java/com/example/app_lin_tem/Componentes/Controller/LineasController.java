@@ -83,8 +83,8 @@ public class LineasController {
 
 
     public void setInfo() {
-        fch1.setText(""+ periodo.getFecha1());
-        fch2.setText(""+periodo.getFecha2());
+        fch1.setText(""+ Math.abs(periodo.getFecha1()));
+        fch2.setText(""+Math.abs(periodo.getFecha2()));
         titulo.setText(periodo.getTitulo());
         linea.setFill(Color.web(periodo.getColor()) );
     }

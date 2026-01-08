@@ -46,28 +46,38 @@
                </font></TextField>
             <MenuBar>
               <menus>
-                <Menu mnemonicParsing="false" text="Guardar">
+                <Menu mnemonicParsing="false" text="Archivos">
                   <items>
-                    <MenuItem mnemonicParsing="false" onAction="#GuardarLocal" text="Guardar local" />
-                        <MenuItem mnemonicParsing="false" onAction="#guardarDatosNube" text="Guardar en la nube" />
+                        <MenuItem mnemonicParsing="false" onAction="#nuevoProyecto" text="nuevo proyecto" />
+                      <Menu mnemonicParsing="false" text="Guardar">
+                        <items>
+                          <MenuItem mnemonicParsing="false" onAction="#GuardarLocal" text="Guardar local" />
+                              <MenuItem mnemonicParsing="false" onAction="#guardarDatosNube" text="Guardar en la nube" />
+                        </items>
+                      </Menu>
+                        <Menu mnemonicParsing="false" text="Cargar">
+                          <items>
+                              <Menu mnemonicParsing="false" text="Cargar archivo nuevo">
+                                <items>
+                                  <MenuItem mnemonicParsing="false" onAction="#cargarLocal" text="Local" />
+                                  <MenuItem mnemonicParsing="false" onAction="#obtenerProyectosCargar" text="Desde la nube" />
+                                </items>
+                              </Menu>
+                              <Menu mnemonicParsing="false" text="Añadir archivo">
+                                <items>
+                                  <MenuItem mnemonicParsing="false" onAction="#anadirLocal" text="Local" />
+                                    <MenuItem mnemonicParsing="false" onAction="#obtenerProyectosAnadir" text="Desde la nube" />
+                                </items>
+                              </Menu>
+                          </items>
+                        </Menu>
+                      <MenuItem mnemonicParsing="false" onAction="#obtenerProyectoEliminar" text="Eliminar archivo de la nube" />
                   </items>
                 </Menu>
-                  <Menu mnemonicParsing="false" text="Cargar">
-                    <items>
-                        <Menu mnemonicParsing="false" text="Cargar archivo nuevo">
-                          <items>
-                            <MenuItem mnemonicParsing="false" onAction="#cargarLocal" text="Local" />
-                            <MenuItem mnemonicParsing="false" onAction="#obtenerProyectosCargar" text="Desde la nube" />
-                          </items>
-                        </Menu>
-                        <Menu mnemonicParsing="false" text="Añadir archivo">
-                          <items>
-                            <MenuItem mnemonicParsing="false" onAction="#anadirLocal" text="Local" />
-                              <MenuItem mnemonicParsing="false" onAction="#obtenerProyectosAnadir" text="Desde la nube" />
-                          </items>
-                        </Menu>
-                    </items>
-                  </Menu>
+              </menus>
+            </MenuBar>
+            <MenuBar>
+              <menus>
                   <Menu mnemonicParsing="false" text="Imprimir">
                     <items>
                         <MenuItem mnemonicParsing="false" onAction="#imprimirPdf" text="Esquema" />

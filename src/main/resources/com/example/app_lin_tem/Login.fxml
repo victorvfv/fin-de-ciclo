@@ -11,7 +11,7 @@
 <AnchorPane prefHeight="400.0" prefWidth="492.0" stylesheets="@css/cssEstiloGeneral.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.app_lin_tem.Controllers.LoginController">
    <children>
       <Label layoutX="151.0" layoutY="84.0" prefHeight="26.0" prefWidth="150.0" text="Correo Elecctronico" />
-      <TextField fx:id="email" layoutX="151.0" layoutY="111.0" prefHeight="26.0" prefWidth="150.0" />
+      <TextField fx:id="email" layoutX="151.0" layoutY="111.0" onAction="#enterEmail" prefHeight="26.0" prefWidth="150.0" />
       <Label layoutX="151.0" layoutY="137.0" prefHeight="26.0" prefWidth="150.0" text="Contraseña" />
       <TextField fx:id="password" layoutX="151.0" layoutY="163.0" onKeyTyped="#contrasenaVisble" prefHeight="26.0" prefWidth="150.0" visible="false" />
       <Button fx:id="botonAcep" layoutX="151.0" layoutY="288.0" mnemonicParsing="false" onAction="#crearOiniciar" prefHeight="26.0" prefWidth="150.0" text="Button" />
@@ -25,12 +25,11 @@
             <Font size="18.0" />
          </font>
       </Label>
-      <Label fx:id="Link" layoutX="171.0" layoutY="201.0" prefHeight="18.0" prefWidth="150.0" text="No recuerdo mi contraseña" textFill="#001eff" visible="false" />
       <ToggleButton fx:id="TBVer" layoutX="301.0" layoutY="163.0" mnemonicParsing="false" onAction="#passwordSpoiler" prefHeight="26.0" prefWidth="34.0" text="👁‍🗨" />
-      <Label fx:id="ErrCarac" layoutX="104.0" layoutY="201.0" prefHeight="18.0" prefWidth="298.0" text="- La contraseña tiene que tener al menos 8 caracteres" textFill="RED" visible="false" wrapText="true" AnchorPane.leftAnchor="104.0" AnchorPane.rightAnchor="104.0" />
-      <Label fx:id="ErrMayus" layoutX="104.0" layoutY="219.0" prefHeight="18.0" prefWidth="228.0" text="- La contraseña debe tener una mayuscula" textFill="RED" visible="false" wrapText="true" />
-      <Label fx:id="ErrNum" layoutX="104.0" layoutY="237.0" prefHeight="18.0" prefWidth="218.0" text="- La contraseña debe tener un numero" textFill="RED" visible="false" wrapText="true" />
-      <Label fx:id="ErrEsp" layoutX="104.0" layoutY="255.0" prefHeight="18.0" prefWidth="245.0" text="- La contraseña debe tener un carater especial" textFill="RED" visible="false" wrapText="true" />
-      <PasswordField fx:id="passwordField" layoutX="151.0" layoutY="163.0" onKeyTyped="#contrasenaNvisible" prefWidth="150.0" />
+      <Label fx:id="ErrCarac" layoutX="104.0" layoutY="201.0" prefHeight="18.0" prefWidth="320.0" text="- La contraseña tiene que tener al menos 8 caracteres" textFill="RED" visible="false" wrapText="true" AnchorPane.leftAnchor="104.0" AnchorPane.rightAnchor="68.0" />
+      <Label fx:id="ErrMayus" layoutX="104.0" layoutY="219.0" prefHeight="18.0" prefWidth="264.0" text="- La contraseña debe tener una mayuscula" textFill="RED" visible="false" wrapText="true" />
+      <Label fx:id="ErrNum" layoutX="104.0" layoutY="237.0" prefHeight="18.0" prefWidth="264.0" text="- La contraseña debe tener un numero" textFill="RED" visible="false" wrapText="true" />
+      <Label fx:id="ErrEsp" layoutX="104.0" layoutY="255.0" prefHeight="18.0" prefWidth="275.0" text="- La contraseña debe tener un carater especial" textFill="RED" visible="false" wrapText="true" />
+      <PasswordField fx:id="passwordField" layoutX="151.0" layoutY="163.0" onAction="#enterPassword" onKeyTyped="#contrasenaNvisible" prefWidth="150.0" />
    </children>
 </AnchorPane>

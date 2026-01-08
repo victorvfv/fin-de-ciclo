@@ -40,7 +40,7 @@ public class hitoLineasController {
     }
 
     public void setInfo(){
-        titulo.setText(hito.getTitulo()+" "+hito.getFecha());
+        titulo.setText(hito.getTitulo()+" "+Math.abs(hito.getFecha()));
     }
 
     public void setCtr(MainViewController ctr) {

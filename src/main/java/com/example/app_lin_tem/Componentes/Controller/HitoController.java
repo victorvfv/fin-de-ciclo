@@ -102,9 +102,13 @@ public class HitoController  {
         else{
             hito.setFecha(Integer.parseInt(Fecha.getText()));
         }
+        if(hito.getFecha()==0){
+            hito.setFecha(1);
+            Fecha.setText("1");
+        }
         Dato.setText(Dato.getText()+" "+hito.getFecha());
         Dato.requestFocus();
-        Pestaña.setText("Hito: "+NomHit.getText()+" "+hito.getFecha()+" ");
+        Pestaña.setText("Hito: "+NomHit.getText()+" "+Math.abs(hito.getFecha())+" ");
         mainViewController.setDurFchMinFchMax(1.7976931348623157e+308,hito.getFecha(),hito.getFecha());
     }
 
@@ -116,8 +120,7 @@ public class HitoController  {
 
     @FXML
     protected void  OnActionTitulo(){
-        hito.setTitulo(NomHit.getText());
-        Dato.setText(Dato.getText()+" "+hito.getTitulo());
+
         Fecha.requestFocus();
         Pestaña.setText("Hito: "+hito.getTitulo()+" "+Fecha.getText()+" ");
     }
@@ -137,16 +140,33 @@ public class HitoController  {
 
     @FXML
     protected void onActionComboBox() {
-        for (Periodo periodo1 : periodos) {
+        for (Periodo periodoDep : periodos) {
 
-            if (periodo1.getTitulo().equals(Dependencias.getValue())) {
-                hito.setDependencia(periodo1);
-                periodo1.addHitosDependientes(hito);
+            if (periodoDep.getTitulo().equals(Dependencias.getValue())) {
+                hito.setDependencia(periodoDep);
+                if(hito.getDependencia().getHitosDependientes().size()<1){
+                    mainViewController.bloqCamposPorDepencdencia(hito.getDependencia());
+                }
+                if(hito.getDependencia()!=null){
+                    hito.getDependencia().getPeriodosDependientes().remove(hito);
+                }
+                if(hito.getDependencia()!=null){
+                    hito.getDependencia().getHitosDependientes().remove(hito);
+                }
+                periodoDep.addHitosDependientes(hito);
+
                 bloqAC(true);
 
             } else if (" ".equals(Dependencias.getValue())) {
+                try{
+                Periodo perPadre= hito.getDependencia();
+                perPadre.getHitosDependientes().remove(hito);
+                if(perPadre.getPeriodosDependientes().isEmpty()&&perPadre.getHitosDependientes().isEmpty()){
+                    mainViewController.bloqCamposPorDepencdencia(perPadre);
+                }
                 hito.setDependencia(null);
-                bloqAC(false);
+                bloqAC(false);}catch (NullPointerException _){}
+                hito.setDependencia(null);
             }
         }
     }
@@ -157,8 +177,26 @@ public class HitoController  {
         confirmation.setHeaderText("¿Eliminar este Hito?");
         ButtonType btn =confirmation.showAndWait().get();
         if(btn==ButtonType.OK){
+            if(hito.getDependencia()!=null){
+                Periodo perPadre= hito.getDependencia();
+                hito.getDependencia().getHitosDependientes().remove(hito);
+                if(perPadre.getPeriodosDependientes().isEmpty()&&perPadre.getHitosDependientes().isEmpty()){
+                    mainViewController.bloqCamposPorDepencdencia(perPadre);
+                }
+            }
             mainViewController.delVistaHit(hito);
         }
+    }
+
+    @FXML
+    protected void setTitulo(){
+        hito.setTitulo(NomHit.getText());
+    }
+
+    @FXML
+    protected void setDato(){
+        hito.setDatos(Dato.getText());
+        Pestaña.setText("Hito: "+hito.getTitulo()+" "+Fecha.getText()+" ");
     }
 
     public void setComboBox(String txt){

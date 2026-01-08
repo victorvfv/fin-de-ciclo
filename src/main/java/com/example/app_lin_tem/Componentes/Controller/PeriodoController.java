@@ -77,6 +77,11 @@ public class PeriodoController {
 
     }
 
+    public void setFechasIni(){
+        Fecha1.setText("1");
+        Fecha2.setText("2");
+    }
+
     @FXML
     protected void OnFechaChanged1(){
         if(Fecha1.getText().equals("0")){
@@ -121,6 +126,7 @@ public class PeriodoController {
 
         }
 
+
     }
 
     @FXML
@@ -134,6 +140,10 @@ public class PeriodoController {
 
     @FXML
     protected void  OnActionFecha2(){
+        setFechas();
+    }
+
+    private void setFechas(){
         int fecha1;
         int fecha2;
         try {
@@ -149,24 +159,27 @@ public class PeriodoController {
             Fecha2.setText(""+fecha2);
         }
 
+        if(fecha1==fecha2){
+            fecha2++;
+            Fecha2.setText(""+fecha2);
+        }
+
         if(fecha1>fecha2){
             fecha1=fecha1*(-1);
             fecha2=fecha2*(-1);
         }
+
         periodo.setFecha1(fecha1);
         periodo.setFecha2(fecha2);
-        Dato.setText(Dato.getText()+" "+periodo.getFecha1()+" "+periodo.getFecha2());
         Dato.requestFocus();
-        Pestaña.setText("Periodo: "+NomPer.getText()+" "+periodo.getFecha1()+" "+periodo.getFecha2());
+        Pestaña.setText("Periodo: "+NomPer.getText()+" "+Math.abs(periodo.getFecha1())+"-"+Math.abs(periodo.getFecha2()));
         mainViewController.setDurFchMinFchMax(periodo.getDuracion(),periodo.getFecha1(),periodo.getFecha2());
     }
 
     @FXML
     protected void  OnActionTitulo(){
-        periodo.setTitulo(NomPer.getText());
-        Dato.setText(Dato.getText()+" "+periodo.getTitulo());
         Fecha1.requestFocus();
-        Pestaña.setText("Periodo: "+periodo.getTitulo()+" "+Fecha1.getText()+" "+Fecha2.getText());
+        Pestaña.setText("Periodo: "+periodo.getTitulo()+" "+Fecha1.getText()+"-"+Fecha2.getText());
     }
 
     @FXML
@@ -177,7 +190,7 @@ public class PeriodoController {
     @FXML
     protected void onActionComboBox(){
         for(Periodo periodoDep: periodos){
-                if(periodoDep.getTitulo().equals(Dependencias.getValue())){
+                if(periodoDep.getTitulo().equals(Dependencias.getValue())&&(periodoDep.getId()!=periodo.getId())){
 
                     periodo.setDependencia(periodoDep);
                     if(periodo.getDependencia().getPeriodosDependientes().size()<1){
@@ -248,9 +261,21 @@ public class PeriodoController {
         ButtonType btn =confirmation.showAndWait().get();
         if(btn==ButtonType.OK){
             if(periodo.getDependencia()!=null){
-            periodo.getDependencia().getPeriodosDependientes().remove(periodo);}
-            mainViewController.delVistaPer(periodo);
+                Periodo perPadre= periodo.getDependencia();
+                periodo.getDependencia().getPeriodosDependientes().remove(periodo);
+                if(perPadre.getPeriodosDependientes().isEmpty()&&perPadre.getHitosDependientes().isEmpty()){
+                    mainViewController.bloqCamposPorDepencdencia(perPadre);
+                }
+
+            }
+                mainViewController.delVistaPer(periodo);
         }
+    }
+
+    @FXML
+    protected void setTitulo(){
+        periodo.setTitulo(NomPer.getText());
+        Pestaña.setText("Periodo: "+periodo.getTitulo()+" "+Fecha1.getText()+" "+Fecha2.getText());
     }
 
     @FXML

@@ -4,6 +4,7 @@ import com.example.app_lin_tem.Controllers.MainViewController;
 import com.example.app_lin_tem.Model.Proyecto;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.layout.VBox;
 
@@ -16,6 +17,19 @@ public class ProyectosNubeController {
     private Map<String, Proyecto> proyectos;
     private MainViewController ctr;
     public boolean cargar;
+    public boolean eliminar;
+
+    @FXML
+    public VBox VboxBtn;
+
+
+    public boolean isEliminar() {
+        return eliminar;
+    }
+
+    public void setEliminar(boolean eliminar) {
+        this.eliminar = eliminar;
+    }
 
     public boolean isCargar() {
         return cargar;
@@ -25,8 +39,7 @@ public class ProyectosNubeController {
         this.cargar = cargar;
     }
 
-    @FXML
-    public VBox VboxBtn;
+
 
     public MainViewController getCtr() {
         return ctr;
@@ -52,13 +65,20 @@ public class ProyectosNubeController {
                 Parent nodo = loader.load();
 
                 ProyectosNubeBtnController ctr= loader.getController();
+                ctr.setEliminar(eliminar);
                 ctr.setProyecto(proyecto);
                 ctr.setCtr(this.ctr);
                 ctr.setCargar(cargar);
+                ctr.setParetController(this);
+                ctr.setNodo(nodo);
                 VboxBtn.getChildren().add(nodo);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    public void delNodo(Node node){
+        VboxBtn.getChildren().remove(node);
     }
 }

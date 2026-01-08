@@ -3,15 +3,43 @@ package com.example.app_lin_tem.Componentes.Controller;
 import com.example.app_lin_tem.Controllers.MainViewController;
 import com.example.app_lin_tem.Model.Proyecto;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 
 public class ProyectosNubeBtnController {
     public MainViewController ctr;
     public Proyecto proyecto;
     public boolean cargar;
+    public boolean eliminar;
+    public Node nodo;
+    public ProyectosNubeController paretController;
 
     @FXML
-    public Button btnProyecto;
+    public Button btnProyecto,btnDel;
+
+    public ProyectosNubeController getParetController() {
+        return paretController;
+    }
+
+    public void setParetController(ProyectosNubeController paretController) {
+        this.paretController = paretController;
+    }
+
+    public Node getNodo() {
+        return nodo;
+    }
+
+    public void setNodo(Node nodo) {
+        this.nodo = nodo;
+    }
+
+    public boolean isEliminar() {
+        return eliminar;
+    }
+
+    public void setEliminar(boolean eliminar) {
+        this.eliminar = eliminar;
+    }
 
     public boolean isCargar() {
         return cargar;
@@ -36,6 +64,8 @@ public class ProyectosNubeBtnController {
     public void setProyecto(Proyecto proyecto) {
         this.proyecto = proyecto;
         btnProyecto.setText(proyecto.getNombre());
+        btnProyecto.setDisable(eliminar);
+        btnDel.setDisable(!eliminar);
     }
 
     @FXML
@@ -46,6 +76,15 @@ public class ProyectosNubeBtnController {
         else{
             ctr.anadirProyecto(proyecto);
         }
+    }
 
+    @FXML
+    public void eliminarProyecto(){
+        if (ctr.eliminarProyecto(proyecto.getId())) {
+            paretController.delNodo(nodo);
+        }
+        else {
+            ctr.toast("Ha habido un fallo al eliminar el proyecto");
+        }
     }
 }

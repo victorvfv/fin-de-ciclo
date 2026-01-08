@@ -23,13 +23,7 @@ public interface fireBaseData {
             @Query("auth") String idToken
     );
 
-    //leer proyecto
-    @GET("proyectos/{uid}/{id}.json")
-    Call<Proyecto> getProyecto(
-            @Path("uid") String uid,
-            @Path("id") String id,
-            @Query("auth") String idToken
-    );
+
 
 
     // Eliminar proyecto

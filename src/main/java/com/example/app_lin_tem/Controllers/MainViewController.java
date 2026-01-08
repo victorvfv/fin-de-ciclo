@@ -24,6 +24,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.WritableImage;
@@ -133,6 +134,7 @@ public class MainViewController {
 
     @FXML
     protected void onButtonPeridoClick() throws IOException {
+        ScrollData.setVisible(true);
         PeriodoUI periodoUI = new PeriodoUI();
         VboxData.getChildren().add(periodoUI);
 
@@ -146,6 +148,7 @@ public class MainViewController {
         periodoController.setMainViewController(this);
         periodoController.setPeriodos(periodos);
         periodoController.newColor(tablaColores.get(i));
+        periodoController.setFechasIni();
         periodoUI.requestFocus();
 
         i=i+1;
@@ -154,6 +157,7 @@ public class MainViewController {
 
     @FXML
     protected void onButtonHitoClick() throws IOException {
+        ScrollData.setVisible(true);
         HitoUI hitoUI = new HitoUI();
         VboxData.getChildren().add(hitoUI);
 
@@ -319,7 +323,7 @@ public class MainViewController {
         }
     }
 
-    public double calcularAlturaDependientes(double alturaIni,ArrayList<Periodo> lista){
+    public void calcularAlturaDependientes(double alturaIni, ArrayList<Periodo> lista){
         double alturaMax=alturaIni;
 
         for(Periodo periodo: lista){
@@ -369,7 +373,6 @@ public class MainViewController {
         }
 
 
-        return alturaMax;
     }
 
     //calculo de tamaño en funcion de el periodo con menor duracion
@@ -421,7 +424,7 @@ public class MainViewController {
         }
         return "<div style=\"padding-left: "+pad+"px;\" >"
 
-                    +"<h3>"+"<b>"+periodo.getTitulo()+"  "+periodo.getFecha1()+"-"+periodo.getFecha2()+"</b>"+"</h3>"
+                    +"<h3>"+"<b>"+periodo.getTitulo()+"  "+Math.abs(periodo.getFecha1())+"-"+Math.abs(periodo.getFecha2())+"</b>"+"</h3>"
                     +"<div style=\"padding-left: "+(35)+"px;\" >"
 
                         +"<p>"+periodo.getDatos()+"</p>"
@@ -437,7 +440,7 @@ public class MainViewController {
             imagen="<p>"+"<img src=\"file:///"+hito.getImagen()+"\" width=\"200\" height=\"150\">"+"</p>";
         }
         return "<div style=\"padding-left: "+pad+"px;\" >"
-                +"<h3>"+"<b>"+hito.getTitulo()+" "+hito.getFecha()+"</b>"+"</h3>"
+                +"<h3>"+"<b>"+hito.getTitulo()+" "+Math.abs(hito.getFecha())+"</b>"+"</h3>"
                 +"<div style=\"padding-left: "+(35)+"px;\" >"
 
                 +"<p>"+hito.getDatos()+"</p>"
@@ -600,6 +603,7 @@ public class MainViewController {
 
         return doc.html();
     }
+
     @FXML
     public void imprimirPdf(){
         FileChooser fileChooser = new FileChooser();
@@ -712,6 +716,23 @@ public class MainViewController {
 
     public void bloqCamposPorDepencdencia(Periodo periodo){
         ControladoresPer.get(periodo.getId()).bloquearHabilitarCampos();
+    }
+
+    @FXML
+    public void nuevoProyecto(){
+        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmation.setHeaderText("Al crear un nuevo proyecto toda la informacion del proyecto se perdera");
+        confirmation.setContentText("¿Estas seguro de continuar?");
+        ButtonType btn =confirmation.showAndWait().get();
+        if(btn==ButtonType.OK){
+            periodos= new ArrayList<Periodo>();
+            hitos= new ArrayList<Hito>();
+            proyectoActual=new Proyecto(UUID.randomUUID().toString(),"Sin nombre",periodos,hitos);
+            VboxData.getChildren().clear();
+            jaulaLineas.getChildren().clear();
+            HTMLEditor.setHtmlText("");
+            NomProyecto.setText("Sin nombre");
+        }
     }
 
     @FXML
@@ -896,7 +917,7 @@ public class MainViewController {
             stage.setScene(scene);
             stage.initModality(Modality.APPLICATION_MODAL);
             LoginController ctr= loader.getController();
-            ctr.setVista(true);
+            ctr.setVista(true,stage);
             ctr.setCtr(this);
             stage.showAndWait();
 
@@ -926,7 +947,7 @@ public class MainViewController {
             stage.initModality(Modality.APPLICATION_MODAL);
 
             LoginController ctr= loader.getController();
-            ctr.setVista(false);
+            ctr.setVista(false,stage);
             ctr.setCtr(this);
             stage.showAndWait();
 
@@ -935,7 +956,7 @@ public class MainViewController {
         } catch (IOException e) {}
     }
 
-    public void crearSesionUI(String email,String contraseña) throws IOException {
+    public boolean crearSesionUI(String email,String contraseña) throws IOException {
         AuthRequest request= new AuthRequest(email,contraseña);
 
         Response<AuthResponse> response =
@@ -947,9 +968,9 @@ public class MainViewController {
             refreshToken = response.body().refreshToken;
             uID=response.body().localId;
             timer = LocalTime.now();
-            toast("Sesión iniciada correctamente");
-            toast("Usuario: " + response.body().email);
-            return;
+
+
+            return true;
         }
 
         if (response.errorBody() != null) {
@@ -970,10 +991,10 @@ public class MainViewController {
             toast("Error desconocido al crear la sesión pruebe mas tarde o pongase en contanto con el servicio tecnico");
 
         }
-
+        return false;
     }
 
-    public void iniciarSesionUI(String email, String contraseña) throws IOException {
+    public boolean iniciarSesionUI(String email, String contraseña) throws IOException {
         AuthRequest request= new AuthRequest(email,contraseña);
 
         Response<AuthResponse> response =
@@ -984,9 +1005,9 @@ public class MainViewController {
             refreshToken = response.body().refreshToken;
             uID=response.body().localId;
             timer = LocalTime.now();
-            toast("Sesión iniciada correctamente");
-            toast("Usuario: " + response.body().email);
-            return;
+
+
+            return true;
         }
         if (response.errorBody() != null) {
             String errorJson = response.errorBody().string();
@@ -1004,8 +1025,8 @@ public class MainViewController {
             toast("Error desconocido al iniciar sesión pruebe mas tarde o pongase en contanto con el servicio tecnico");
 
         }
+        return false;
     }
-
 
     @FXML
     public void guardarDatosNube() throws IOException {
@@ -1036,19 +1057,22 @@ public class MainViewController {
         }
     }
 
-
-
     @FXML
     public void obtenerProyectosCargar() throws IOException {
-        cargarProyectosNube(true);
+        cargarProyectosNube(true,false);
     }
 
     @FXML
     public void obtenerProyectosAnadir() throws IOException {
-        cargarProyectosNube(false);
+        cargarProyectosNube(false,false);
     }
 
-    public void cargarProyectosNube(boolean cargar) throws IOException {
+    @FXML
+    public void obtenerProyectoEliminar() throws IOException {
+        cargarProyectosNube(false,true);
+    }
+
+    public void cargarProyectosNube(boolean cargar,boolean eliminar) throws IOException {
         if(IdToken.equals("")){
             Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
             confirmation.setHeaderText("Tienes que iniciar sesion");
@@ -1081,6 +1105,7 @@ public class MainViewController {
                     ProyectosNubeController ctr = loader.getController();
                     ctr.setCtr(this);
                     ctr.setProyectos(response.body());
+                    ctr.setEliminar(eliminar);
                     ctr.setCargar(cargar);
                     ctr.proyectosBtn();
 
@@ -1092,7 +1117,18 @@ public class MainViewController {
         }
     }
 
-    public void obtenerProyecto(){
+    public boolean eliminarProyecto(String id){
+        try {
+            Response<Void> response= dbApi.deleteProyecto(uID,id,IdToken).execute();
+            if(response.isSuccessful()){
+                return true;
+            }
+            else {
+                return false;
+            }
+        } catch (IOException e) {
+            return false;
+        }
 
     }
 }
