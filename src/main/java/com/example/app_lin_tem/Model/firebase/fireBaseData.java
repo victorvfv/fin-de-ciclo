@@ -8,37 +8,34 @@ import java.util.Map;
 
 public interface fireBaseData {
     //guardar
-    @POST("proyectos/{id}.json")
+    @PUT("proyectos/{uid}/{id}.json")
     Call<Proyecto> saveProyecto(
+                @Path("uid") String uid,
                 @Path("id") String id,
                 @Query("auth") String idToken,
                 @Body Proyecto proyecto
     );
 
     //leer todos los proyectos
-    @GET("proyectos.json")
-    Call<Map<String,Proyecto>> getProyecto(
+    @GET("proyectos/{uid}/.json")
+    Call<Map<String,Proyecto>> getProyectos(
+            @Path("uid") String uid,
             @Query("auth") String idToken
     );
 
     //leer proyecto
-    @GET("proyectos/{id}.json")
+    @GET("proyectos/{uid}/{id}.json")
     Call<Proyecto> getProyecto(
+            @Path("uid") String uid,
             @Path("id") String id,
             @Query("auth") String idToken
     );
 
-    //Actualizar parcialmente
-    @PATCH("proyectos/{is}.json")
-    Call<Proyecto> updateProyecto(
-            @Path("id")String id,
-            @Query("auth") String idToken,
-            @Body Map<String,Object> updates
-    );
 
     // Eliminar proyecto
-    @DELETE("proyectos/{id}.json")
+    @DELETE("proyectos/{uid}/{id}.json")
     Call<Void> deleteProyecto(
+            @Path("uid") String uid,
             @Path("id") String id,
             @Query("auth") String idToken
     );

@@ -3,6 +3,7 @@ package com.example.app_lin_tem.Controllers;
 
 import com.example.app_lin_tem.Componentes.Controller.HitoController;
 import com.example.app_lin_tem.Componentes.Controller.PeriodoController;
+import com.example.app_lin_tem.Componentes.Controller.ProyectosNubeController;
 import com.example.app_lin_tem.Componentes.HitoUI;
 import com.example.app_lin_tem.Componentes.Lineas;
 import com.example.app_lin_tem.Componentes.PeriodoUI;
@@ -22,6 +23,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.WritableImage;
@@ -43,6 +45,7 @@ import retrofit2.Response;
 
 import javax.imageio.ImageIO;
 import java.io.*;
+import java.time.LocalTime;
 import java.util.*;
 
 public class MainViewController {
@@ -57,7 +60,8 @@ public class MainViewController {
     private HashMap<String,HitoController> ControladoresHit;
     private double duracionMin=2,fechaMin,fechaMax;
     private int i=1;
-    private String IdToken;
+    private String IdToken,refreshToken,uID;
+    private LocalTime timer;
     final private String APIKEY="AIzaSyDkC0ZFDN4dNcQCyaLdpRWZpUQ_p_r_O3U";
     private fireBaseData dbApi;
     private fireBaseAuth authApi;
@@ -108,6 +112,7 @@ public class MainViewController {
         contendorLineas.setScaleY(-1);
         contendorLineas.vvalueProperty().bind(jaulaLineas.heightProperty());
         contendorLineas.hvalueProperty().bind(jaulaLineas.widthProperty());
+        IdToken="";
         dbApi=retroFitClient.databaseApi();
         authApi=retroFitClient.authApi();
         tokenApi=retroFitClient.tokenApi();
@@ -313,7 +318,6 @@ public class MainViewController {
             }
         }
     }
-
 
     public double calcularAlturaDependientes(double alturaIni,ArrayList<Periodo> lista){
         double alturaMax=alturaIni;
@@ -738,7 +742,7 @@ public class MainViewController {
 
     @FXML
     public void cargarLocal(){
-       proyectoCargado( cargarJson());
+       proyectoCargado(cargarJson());
        rellenarVbox(proyectoActual.getPeriodos(),proyectoActual.getHitos());
     }
 
@@ -746,6 +750,11 @@ public class MainViewController {
     public void anadirLocal(){
         Proyecto proyecto = cargarJson();
         if(proyecto!=null){
+            anadirProyecto(proyecto);
+        }
+    }
+
+    public void anadirProyecto(Proyecto proyecto){
             for(Periodo periodo:proyecto.getPeriodos()){
                 for(Periodo per:periodos){
                     if(periodo.getId().equals(per.getId())){
@@ -765,7 +774,7 @@ public class MainViewController {
             VboxData.getChildren().clear();
             jaulaLineas.getChildren().clear();
             rellenarVbox(periodos,hitos);
-        }
+
     }
 
     public void proyectoCargado(Proyecto proyecto){
@@ -935,6 +944,9 @@ public class MainViewController {
 
         if (response.isSuccessful() && response.body() != null) {
             IdToken = response.body().idToken;
+            refreshToken = response.body().refreshToken;
+            uID=response.body().localId;
+            timer = LocalTime.now();
             toast("Sesión iniciada correctamente");
             toast("Usuario: " + response.body().email);
             return;
@@ -969,6 +981,9 @@ public class MainViewController {
 
         if(response.isSuccessful()&&response.body()!=null){
             IdToken = response.body().idToken;
+            refreshToken = response.body().refreshToken;
+            uID=response.body().localId;
+            timer = LocalTime.now();
             toast("Sesión iniciada correctamente");
             toast("Usuario: " + response.body().email);
             return;
@@ -991,17 +1006,90 @@ public class MainViewController {
         }
     }
 
-    public void guardarDatos(){
 
+    @FXML
+    public void guardarDatosNube() throws IOException {
+
+        if(IdToken.equals("")){
+            Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmation.setHeaderText("Tienes que iniciar sesion");
+            confirmation.showAndWait();
+        }
+        else{
+            LocalTime timerS= LocalTime.now();
+            java.time.Duration diferencia= java.time.Duration.between(timer,timerS);
+        if(diferencia.toHours()>=1){
+            RefreshTokenResponse response=tokenApi.refreshToken(
+                    APIKEY,
+                    "refresh_token",
+                    refreshToken).execute().body();
+            IdToken=response.id_token;
+            refreshToken=response.refresh_token;
+        }
+        Response<Proyecto> response = dbApi.saveProyecto(uID,proyectoActual.getId(),IdToken,proyectoActual).execute();
+        if(response.isSuccessful()){
+            toast("Archivo guardado correctamente");
+        }
+        else{
+            toast("Se ha producido un error: "+response.code()+" al guardar");
+        }
+        }
     }
 
 
-    public void actualizar(){
 
+    @FXML
+    public void obtenerProyectosCargar() throws IOException {
+        cargarProyectosNube(true);
     }
 
-    public void obtenerProyectos(){
+    @FXML
+    public void obtenerProyectosAnadir() throws IOException {
+        cargarProyectosNube(false);
+    }
 
+    public void cargarProyectosNube(boolean cargar) throws IOException {
+        if(IdToken.equals("")){
+            Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmation.setHeaderText("Tienes que iniciar sesion");
+            confirmation.showAndWait();
+        }
+        else{
+            LocalTime timerS= LocalTime.now();
+            java.time.Duration diferencia= java.time.Duration.between(timer,timerS);
+            if(diferencia.toHours()>=1){
+                RefreshTokenResponse response=tokenApi.refreshToken(
+                        APIKEY,
+                        "refresh_token",
+                        refreshToken).execute().body();
+                IdToken=response.id_token;
+                refreshToken=response.refresh_token;
+            }
+            Response<Map<String, Proyecto>> response = dbApi.getProyectos(uID,IdToken).execute();
+            if(response.isSuccessful()){
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/app_lin_tem/Componentes/proyectosNube.fxml"));
+
+                try{
+                    Parent root = loader.load();
+
+                    Scene scene = new Scene(root);
+                    Stage stage = new Stage();
+                    stage.setTitle("Proyectos");
+                    stage.setScene(scene);
+                    stage.show();
+
+                    ProyectosNubeController ctr = loader.getController();
+                    ctr.setCtr(this);
+                    ctr.setProyectos(response.body());
+                    ctr.setCargar(cargar);
+                    ctr.proyectosBtn();
+
+                }catch (IOException _) {}
+            }
+            else{
+                toast("Se ha producido un error: "+response.code()+" al guardar");
+            }
+        }
     }
 
     public void obtenerProyecto(){

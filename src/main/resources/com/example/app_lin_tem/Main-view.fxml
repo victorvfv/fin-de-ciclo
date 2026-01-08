@@ -49,7 +49,7 @@
                 <Menu mnemonicParsing="false" text="Guardar">
                   <items>
                     <MenuItem mnemonicParsing="false" onAction="#GuardarLocal" text="Guardar local" />
-                        <MenuItem mnemonicParsing="false" text="Guardar en la nube" />
+                        <MenuItem mnemonicParsing="false" onAction="#guardarDatosNube" text="Guardar en la nube" />
                   </items>
                 </Menu>
                   <Menu mnemonicParsing="false" text="Cargar">
@@ -57,13 +57,13 @@
                         <Menu mnemonicParsing="false" text="Cargar archivo nuevo">
                           <items>
                             <MenuItem mnemonicParsing="false" onAction="#cargarLocal" text="Local" />
-                            <MenuItem mnemonicParsing="false" text="Desde la nube" />
+                            <MenuItem mnemonicParsing="false" onAction="#obtenerProyectosCargar" text="Desde la nube" />
                           </items>
                         </Menu>
                         <Menu mnemonicParsing="false" text="Añadir archivo">
                           <items>
                             <MenuItem mnemonicParsing="false" onAction="#anadirLocal" text="Local" />
-                              <MenuItem mnemonicParsing="false" text="Desde la nube" />
+                              <MenuItem mnemonicParsing="false" onAction="#obtenerProyectosAnadir" text="Desde la nube" />
                           </items>
                         </Menu>
                     </items>
