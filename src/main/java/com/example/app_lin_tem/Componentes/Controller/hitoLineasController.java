@@ -48,7 +48,7 @@ public class hitoLineasController {
     }
 
     public void inicioHito(){
-        linea.setStartY(-hito.getAlturaDep());
+        linea.setEndY(hito.getAlturaDep());
     }
 
     @FXML
@@ -75,27 +75,31 @@ public class hitoLineasController {
     public void ratonDentro(){
         linea.setStrokeWidth(3);
         titulo.setOpacity(1);
-        titulo.toFront();
-        ctr.sendFront(nodo);
+
+        ctr.sendFrontOrBack(nodo,true);
     }
 
     @FXML
     public void ratonFuera(){
         titulo.setOpacity(0.75);
         linea.setStrokeWidth(1);
+        ctr.sendFrontOrBack(nodo,false);
     }
 
     @FXML
     public void ratonDentroLinea(){
         linea.setStrokeWidth(3);
         titulo.setOpacity(1);
-        titulo.toFront();
-        ctr.sendFront(nodo);
+
+        ctr.sendFrontOrBack(nodo,true);
     }
 
     @FXML
     public void ratonFueraLinea(){
         titulo.setOpacity(0.75) ;
         linea.setStrokeWidth(1);
+        ctr.sendFrontOrBack(nodo,false);
     }
+
+
 }

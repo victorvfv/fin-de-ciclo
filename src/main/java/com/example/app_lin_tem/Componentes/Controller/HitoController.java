@@ -130,7 +130,7 @@ public class HitoController  {
         ArrayList nombres = new ArrayList<>();
         nombres.add(" ");
         for(Periodo dependencia: periodos){
-            if(((hito.getFecha()>=dependencia.getFecha1())&hito.getFecha()<dependencia.getFecha2())){
+            if(((hito.getFecha()>=dependencia.getFecha1())&hito.getFecha()<=dependencia.getFecha2())){
                 nombres.add(dependencia.getTitulo());
             }
         }

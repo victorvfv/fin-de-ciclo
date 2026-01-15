@@ -18,8 +18,6 @@ public class JsonMaker {
     }
 
     public Proyecto getProyecto(String file){
-
-
         return gson.fromJson(file,Proyecto.class);
 
     }

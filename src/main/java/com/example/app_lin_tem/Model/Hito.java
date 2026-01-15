@@ -1,6 +1,5 @@
 package com.example.app_lin_tem.Model;
 
-import java.awt.*;
 import java.util.UUID;
 
 public class Hito {
@@ -9,7 +8,7 @@ public class Hito {
     private String Titulo, Id;
     private int Fecha;
     private String Datos;
-    private double Altura, alturaDep;
+    private double Altura, alturaDep,alturaFinal;
     private String imagen;
     private String dependenciaId;
     private transient Periodo Dependencia;
@@ -85,11 +84,8 @@ public class Hito {
         Altura=Altura+add;
     }
 
-    public void setAlturaDep(){
-        alturaDep=Dependencia.getAltura();
-    }
 
-    public void setAlturaNDep(double alturaDep){
+    public void setAlturaDep(double alturaDep){
         this.alturaDep=alturaDep;
     }
 
@@ -123,9 +119,11 @@ public class Hito {
         return alturaDep;
     }
 
-    public void setAlturaDep(double alturaDep) {
-        this.alturaDep = alturaDep;
+    public double getAlturaFinal() {
+        return alturaFinal;
     }
 
-
+    public void setAlturaFinal(double alturaFinal) {
+        this.alturaFinal = alturaFinal;
+    }
 }

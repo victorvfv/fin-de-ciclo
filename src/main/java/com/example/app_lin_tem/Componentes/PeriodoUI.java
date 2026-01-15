@@ -26,7 +26,5 @@ public class PeriodoUI extends TitledPane {
 
     }
 
-    public PeriodoController getCtr() {
-        return ctr;
-    }
+
 }

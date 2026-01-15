@@ -37,16 +37,7 @@ public class PeriodoController {
     @FXML
     private TitledPane Pestaña;
 
-    public void setDatos(){
-        NomPer.setText(periodo.getTitulo());
-        Dato.setText(periodo.getDatos());
-        Fecha1.setText(periodo.getFecha1()+"");
-        Fecha2.setText(periodo.getFecha2()+"");
-        try{
-        Dependencias.setValue(periodo.getDependencia().getTitulo());}catch (NullPointerException _){}
-        Pestaña.setText("Perido: "+periodo.getTitulo()+" "+periodo.getFecha1()+"-"+periodo.getFecha2());
-        color.setValue((Color.web(periodo.getColor())));
-    }
+
 
     private Periodo periodo;
 
@@ -61,6 +52,17 @@ public class PeriodoController {
         periodos = new ArrayList<>();
 
 
+    }
+
+    public void setCampos(){
+        NomPer.setText(periodo.getTitulo());
+        Dato.setText(periodo.getDatos());
+        Fecha1.setText(periodo.getFecha1()+"");
+        Fecha2.setText(periodo.getFecha2()+"");
+        try{
+            Dependencias.setValue(periodo.getDependencia().getTitulo());}catch (NullPointerException _){}
+        Pestaña.setText("Perido: "+periodo.getTitulo()+" "+periodo.getFecha1()+"-"+periodo.getFecha2());
+        color.setValue((Color.web(periodo.getColor())));
     }
 
     public void setPeriodo(Periodo periodo) {

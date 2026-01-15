@@ -51,15 +51,13 @@ import java.util.*;
 
 public class MainViewController {
 
-
-
     private ArrayList<Periodo> periodos;
     private ArrayList<Hito> hitos;
     private Proyecto proyectoActual;
     private HashMap<String,Node> vistas;
     private HashMap<String,PeriodoController> ControladoresPer;
     private HashMap<String,HitoController> ControladoresHit;
-    private double duracionMin=2,fechaMin,fechaMax;
+    private double duracionMin=1,fechaMin=1,fechaMax;
     private int i=1;
     private String IdToken,refreshToken,uID;
     private LocalTime timer;
@@ -95,9 +93,7 @@ public class MainViewController {
 
     @FXML
     public TextField NomProyecto;
-
-
-
+    
     public MainViewController(){
         periodos= new ArrayList<Periodo>();
         hitos= new ArrayList<Hito>();
@@ -173,42 +169,42 @@ public class MainViewController {
 
     @FXML
     protected void onButtonCrearCLick(){
-       ScrollData.setVisible(false) ;
+        ScrollData.setVisible(false) ;
 
-       jaulaLineas.getChildren().clear();
-       calcularAlturasPrimarios(crearArrayOrdenadoLineas());
+        jaulaLineas.getChildren().clear();
+        calcularAlturasPrimarios(crearArrayOrdenadoLineas());
+        alturaHitos();
 
+        for(Periodo periodo:periodos){
+            Lineas linea = new Lineas(periodo);
+            linea.setLayoutX(getPosicion(periodo.getFecha1()));
+            if(!periodo.getHitosDependientes().isEmpty()){
+                //periodo.setAlturaMaxHit();
+            }
 
-       for(Periodo periodo:periodos){
-           Lineas linea = new Lineas(periodo);
-           linea.setLayoutX(getPosicion(periodo.getFecha1()));
-           if(!periodo.getHitosDependientes().isEmpty()){
-               //periodo.setAlturaMaxHit();
-           }
+            linea.setLayoutY(periodo.getAltura());
+            linea.setScaleY(-1);
+            linea.ctr.setTamaño(getTamaño(periodo.getDuracion()));
 
-           linea.setLayoutY(periodo.getAltura());
-           linea.setScaleY(-1);
-           linea.ctr.setTamaño(getTamaño(periodo.getDuracion()));
-
-           jaulaLineas.getChildren().add(linea);
-           setDurFchMinFchMax(periodo.getDuracion(),periodo.getFecha1(),periodo.getFecha2());
-       }
-       for(Hito hito:hitos) {
-           if(hito.getAlturaDep()==0){
-               hito.setAlturaNDep(10);
-               hito.setAltura(58);
-               for(Periodo periodo: crearArrayOrdenadoLineas()){
-                   if(hito.getFecha()>=periodo.getFecha1()&&hito.getFecha()<=periodo.getFecha2()){
-                       hito.setAltura(Math.max(hito.getAlturaDep(),periodo.getAlturaMax()-78));
-                       hito.setAlturaNDep(-10);
-                       if(hito.getAltura()==0){
-                           hito.setAltura(58);
-                           hito.setAlturaNDep(10);
-                       }
-                   }
-               }
+            jaulaLineas.getChildren().add(linea);
+            setDurFchMinFchMax(periodo.getDuracion(),periodo.getFecha1(),periodo.getFecha2());
+        }
+        for(Hito hito:hitos) {
+            if(hito.getAlturaDep()==0){
+                hito.setAlturaDep(10);
+                hito.setAltura(58);
+                for(Periodo periodo: crearArrayOrdenadoLineas()){
+                    if(hito.getFecha()>=periodo.getFecha1()&&hito.getFecha()<=periodo.getFecha2()){
+                        hito.setAltura(Math.max(hito.getAlturaDep(),periodo.getAlturaMax()-78));
+                        hito.setAlturaDep(-10);
+                        if(hito.getAltura()==0){
+                            hito.setAltura(58);
+                            hito.setAlturaDep(10);
+                        }
+                    }
+                }
                 setDurFchMinFchMax(0.0,hito.getFecha(),hito.getFecha());
-           }
+            }
             hitoLineas hitoLinea= new hitoLineas(hito);
             double x =getPosicion(hito.getFecha());
             double l=hitoLinea.getPrefWidth()/2;
@@ -224,28 +220,60 @@ public class MainViewController {
         }
     }
 
-    public void sendFront(Node node){
-        node.toFront();
+    public void sendFrontOrBack(Node node,boolean Front){
+        if(Front){
+            node.toFront();}
+        else{
+            node.toBack();
+        }
     }
 
     public void alturaHitos(){
-        for(Hito hito:hitos){hito.setAltura(0);hito.setAlturaNDep(0);}
-        for(Periodo per:crearArrayOrdenadoLineas()){
-            ArrayList<Hito> cajaHitos= new ArrayList<>();
-            for (Hito hito:hitos){
-                if(per== hito.getPadreCaja(hito.getDependencia())){
-                    hito.setAlturaDep();
-                    hito.setAltura(per.getAlturaMax());
-                    cajaHitos.add(hito);
+        for(Hito hito:creArrayOrdenadoHito()){
+            hito.setAltura(40);
+            hito.setAlturaDep(146-40);
+            hito.setAlturaFinal(146-40);
+            for(Periodo periodo: crearArrayOrdenadoLineas()){
+                if(hito.getFecha()>=periodo.getFecha1()&&hito.getFecha()<=periodo.getFecha2()){
+                    hito.setAlturaDep(Math.max(hito.getAlturaDep(),periodo.getAlturaMax()+48));
+                    hito.setAlturaFinal(hito.getAlturaDep());
                 }
             }
-            for(Hito hito:cajaHitos){
-                for(Hito hit:cajaHitos){
-                    if((hito.getAltura()==hit.getAltura()&&hit.getFecha()==hito.getFecha())&&(hit!=hito)){
-                        hit.addAltura(30);
-                    }
+        }
+        for(Hito hito:creArrayOrdenadoHito()){
+            for(Hito hit:creArrayOrdenadoHito()){
+                if(((hito.getFecha()==hit.getFecha())&&(hit.getAlturaFinal()== hito.getAlturaFinal()))&&hito!=hit){
+                    hit.setAlturaDep(hit.getAlturaDep()+30);
+                    hit.setAlturaFinal(hit.getAlturaDep());
                 }
             }
+        }
+    }
+
+
+    public void calcularAlturasHitosDep(Periodo periodo){
+        ArrayList<Hito> cajaHitos = new ArrayList<>();
+        for(Hito hito:hitos){
+            if(hito.getPadreCaja(hito.getDependencia())==periodo){
+                cajaHitos.add(hito);
+            }
+        }
+        for(Hito hito:cajaHitos){
+            hito.setAltura(hito.getDependencia().getAltura()+58);
+            double alturaFinal= (periodo.getAlturaMax()+88)-hito.getAltura();
+            hito.setAlturaFinal(periodo.getAlturaMax()+88);
+            hito.setAlturaDep(alturaFinal);
+
+        }
+        for(Hito hito:cajaHitos){
+            for(Hito hit:cajaHitos){
+                if(((hito.getFecha()==hit.getFecha())&&(hit.getAlturaFinal()== hito.getAlturaFinal()))&&hito!=hit){
+                    hit.setAlturaDep(hit.getAlturaDep()+30);
+                    hit.setAlturaFinal(hit.getAlturaDep());
+
+                }
+            }
+            hito.getPadreCaja(hito.getDependencia()).setAlturaMaxcaja(hito.getAlturaFinal());
         }
     }
 
@@ -259,9 +287,11 @@ public class MainViewController {
                 calcularAlturaDependientes(periodo.getAltura()+58,periodo.getPeriodosDependientes());
                 periodo.setAlturaMax();
             }
-            alturaHitos();
-        }
 
+        }
+        for(Periodo periodo:periodosCalcular){
+            calcularAlturasHitosDep(periodo);
+        }
         for(Periodo periodo: periodosCalcular){
             ArrayList<Periodo> periodosCoincidentes= new ArrayList<>();
 
@@ -324,7 +354,7 @@ public class MainViewController {
     }
 
     public void calcularAlturaDependientes(double alturaIni, ArrayList<Periodo> lista){
-        double alturaMax=alturaIni;
+
 
         for(Periodo periodo: lista){
             int iter=0;
@@ -349,6 +379,8 @@ public class MainViewController {
             }
 
             boolean hueco=true;
+
+
             for(Periodo altura:periodosCoincidentes){
                 if((altura.getAltura()==periodo.getAltura())|((altura.getAltura()<=periodo.getAltura())&&(periodo.getAltura()<=altura.getAlturaMax()))){
                     periodo.addAltura(altura.getAlturaMax()+58);
@@ -356,10 +388,11 @@ public class MainViewController {
                     hueco=false;
                 }
             }
-            if(!periodo.getPeriodosDependientes().isEmpty()|!periodo.getHitosDependientes().isEmpty()){
+            if(!periodo.getPeriodosDependientes().isEmpty()){
                 calcularAlturaDependientes(periodo.getAltura()+58,periodo.getPeriodosDependientes());
                 periodo.setAlturaMax();
             }
+
             if(colisiona&&(!periodo.getPeriodosDependientes().isEmpty()&&hueco)){
                 for (Periodo per:periodosCoincidentes){
                     per.addAltura(periodo.getAlturaMax()+58);
@@ -367,9 +400,6 @@ public class MainViewController {
                 }
             }
             periodo.setAlturaMax();
-        }
-        for(Periodo per:lista){
-            alturaMax=Math.max(alturaMax,per.getAlturaMax());
         }
 
 
@@ -391,6 +421,7 @@ public class MainViewController {
 
     }
 
+    //devuelve un arrarylist con los periodos padres ordenados por fecha y duracion
     public ArrayList<Periodo> crearArrayOrdenadoLineas(){
         ArrayList<Periodo> lineas = new ArrayList<>();
         for(Periodo periodo : periodos){
@@ -398,12 +429,12 @@ public class MainViewController {
                 lineas.add(periodo);
             }
         }
-        lineas.sort((line1,linea2)->{
-            return line1.getFecha1()-linea2.getFecha1();
-        });
+        lineas.sort( Comparator.comparingInt(Periodo::getFecha1)
+                .thenComparing(Comparator.comparingDouble(Periodo::getDuracion).reversed()));
         return lineas;
     }
 
+    //devuelve un arrarylist con los hitos sin padres ordenados por fecha
     public ArrayList<Hito> creArrayOrdenadoHito(){
         ArrayList<Hito> ordenada= new ArrayList<>();
         for(Hito hito : hitos){
@@ -417,6 +448,7 @@ public class MainViewController {
         return ordenada;
     }
 
+    //genera un div HTML con la informacion del periodo
     public String getDivPer(Periodo periodo,int pad){
         String imagen="";
         if(periodo.getImagen()!=null){
@@ -434,6 +466,7 @@ public class MainViewController {
                 "</div>";
     }
 
+    //genera un div HTML con la informacion del hito
     public String getDivHit(Hito hito,int pad){
         String imagen="";
         if(hito.getImagen()!=null){
@@ -732,6 +765,9 @@ public class MainViewController {
             jaulaLineas.getChildren().clear();
             HTMLEditor.setHtmlText("");
             NomProyecto.setText("Sin nombre");
+            vistas.clear();
+            ControladoresPer.clear();
+            ControladoresHit.clear();
         }
     }
 
@@ -776,6 +812,7 @@ public class MainViewController {
     }
 
     public void anadirProyecto(Proyecto proyecto){
+            asignarDependecias(proyecto.getPeriodos(),proyecto.getHitos());
             for(Periodo periodo:proyecto.getPeriodos()){
                 for(Periodo per:periodos){
                     if(periodo.getId().equals(per.getId())){
@@ -791,6 +828,7 @@ public class MainViewController {
                     }
                 }
             }
+            setIdDependecias(proyecto.getPeriodos());
             hitos.addAll(proyecto.getHitos());
             VboxData.getChildren().clear();
             jaulaLineas.getChildren().clear();
@@ -798,11 +836,33 @@ public class MainViewController {
 
     }
 
+    public void setIdDependecias(ArrayList<Periodo> listaPeriodos){
+        for(Periodo periodo:listaPeriodos){
+            if(!periodo.getPeriodosDependientes().isEmpty()){
+                periodo.getIdDependientes().clear();
+                for(Periodo perDep:periodo.getPeriodosDependientes()){
+                    periodo.getIdDependientes().add(perDep.getId());
+                    perDep.setDependeciaId(periodo.getId());
+                }
+            }
+            if(!periodo.getHitosDependientes().isEmpty()){
+                periodo.getIdHitos().clear();
+                for(Hito hito:periodo.getHitosDependientes()){
+                    periodo.getIdHitos().add(hito.getId());
+                    hito.setDependencia(periodo);
+                }
+            }
+        }
+    }
+
     public void proyectoCargado(Proyecto proyecto){
         VboxData.getChildren().clear();
         jaulaLineas.getChildren().clear();
 
         proyectoActual=proyecto;
+        vistas.clear();
+        ControladoresPer.clear();
+        ControladoresHit.clear();
         NomProyecto.setText(proyectoActual.getNombre());
         periodos=proyectoActual.getPeriodos();
         hitos=proyectoActual.getHitos();
@@ -823,14 +883,16 @@ public class MainViewController {
 
             PeriodoController periodoController = periodoUI.ctr;
 
-            vistas.put(periodoController.getPeriodo().getId(),periodoUI);
-            ControladoresPer.put(periodoController.getPeriodo().getId(),periodoController);
+
 
 
             periodoController.setMainViewController(this);
             periodoController.setPeriodos(periodos);
             periodoController.setPeriodo(periodo);
-            periodoController.setDatos();
+            vistas.put(periodoController.getPeriodo().getId(),periodoUI);
+            ControladoresPer.put(periodoController.getPeriodo().getId(),periodoController);
+
+            periodoController.setCampos();
         }
 
         for(Hito hito:listaHitos){
@@ -839,15 +901,18 @@ public class MainViewController {
 
             HitoController hitoController = hitoUI.ctr;
 
-            vistas.put(hitoController.getHito().getId(),hitoUI);
-            ControladoresHit.put(hitoController.getHito().getId(),hitoController);
+
 
             hitoController.setMainViewController(this);
             hitoController.setHito(hito);
             hitoController.setDatos();
+            vistas.put(hitoController.getHito().getId(),hitoUI);
+            ControladoresHit.put(hitoController.getHito().getId(),hitoController);
             hitoController.setPeriodos(periodos);
 
         }
+        onButtonCrearCLick();
+
     }
 
     public void asignarDependecias(ArrayList<Periodo> listaPeriodos,ArrayList<Hito> listaHitos){
@@ -882,11 +947,10 @@ public class MainViewController {
                 );
         fileChooser.getExtensionFilters().add(imageFilter);
         fileChooser.setSelectedExtensionFilter(imageFilter);
-        fileChooser.setInitialFileName(proyectoActual.getNombre()+".json");
         File file = fileChooser.showOpenDialog(null);
         try {
             String json="";
-            String linea="";
+            String linea;
             JsonMaker gson = new JsonMaker();
             BufferedReader lector= new BufferedReader(new FileReader(file));
             while ((linea=lector.readLine())!=null){
@@ -1046,6 +1110,7 @@ public class MainViewController {
                     refreshToken).execute().body();
             IdToken=response.id_token;
             refreshToken=response.refresh_token;
+            timer = LocalTime.now();
         }
         Response<Proyecto> response = dbApi.saveProyecto(uID,proyectoActual.getId(),IdToken,proyectoActual).execute();
         if(response.isSuccessful()){
@@ -1088,6 +1153,7 @@ public class MainViewController {
                         refreshToken).execute().body();
                 IdToken=response.id_token;
                 refreshToken=response.refresh_token;
+                timer = LocalTime.now();
             }
             Response<Map<String, Proyecto>> response = dbApi.getProyectos(uID,IdToken).execute();
             if(response.isSuccessful()){
@@ -1112,13 +1178,30 @@ public class MainViewController {
                 }catch (IOException _) {}
             }
             else{
-                toast("Se ha producido un error: "+response.code()+" al guardar");
+                toast("Se ha producido un error: "+response.code()+" al cargar");
             }
         }
     }
 
     public boolean eliminarProyecto(String id){
         try {
+            if(IdToken.equals("")){
+                Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+                confirmation.setHeaderText("Tienes que iniciar sesion");
+                confirmation.showAndWait();
+            }
+            else{
+                LocalTime timerS= LocalTime.now();
+                java.time.Duration diferencia= java.time.Duration.between(timer,timerS);
+                if(diferencia.toHours()>=1){
+                    RefreshTokenResponse response=tokenApi.refreshToken(
+                            APIKEY,
+                            "refresh_token",
+                            refreshToken).execute().body();
+                    IdToken=response.id_token;
+                    refreshToken=response.refresh_token;
+                    timer = LocalTime.now();
+                }
             Response<Void> response= dbApi.deleteProyecto(uID,id,IdToken).execute();
             if(response.isSuccessful()){
                 return true;
@@ -1126,9 +1209,9 @@ public class MainViewController {
             else {
                 return false;
             }
-        } catch (IOException e) {
+        }} catch (IOException e) {
             return false;
         }
-
+        return false;
     }
 }

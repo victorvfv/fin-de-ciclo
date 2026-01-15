@@ -8,8 +8,6 @@ public class Proyecto {
     private String Nombre;
     private ArrayList<Periodo> periodos;
     private ArrayList<Hito> hitos;
-    private boolean saveFire;
-    private transient String url;
 
     public Proyecto(String id, String nombre, ArrayList<Periodo> periodos, ArrayList<Hito> hitos) {
         Id = id;
@@ -50,19 +48,4 @@ public class Proyecto {
         this.hitos = hitos;
     }
 
-    public boolean isSaveFire() {
-        return saveFire;
-    }
-
-    public void setSaveFire(boolean saveFire) {
-        this.saveFire = saveFire;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
 }

@@ -221,11 +221,7 @@ public class Periodo {
                 per.setAlturaMax();
             }
         }
-        if(!hitosDependientes.isEmpty()){
-            for(Hito hito:hitosDependientes){
-                AlturaMax=Math.max(AlturaMax, hito.getAlturaDep());
-            }
-        }
+
     }
 
     public void setAlturaMaxHit(){
@@ -234,5 +230,9 @@ public class Periodo {
 
     public void setId(String id) {
         Id = id;
+    }
+
+    public void setAlturaMaxcaja(double valor){
+        AlturaMax= Math.max(AlturaMax,valor);
     }
 }
