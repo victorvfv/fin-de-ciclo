@@ -16,7 +16,24 @@ public class VistaDatoController {
 
    private String html ;
 
-
+    /**
+     * Genera el HTML correspondiente a un Periodo.
+     *
+     * Incluye:
+     * - Título y rango de fechas
+     * - Descripción
+     * - Imagen asociada
+     * - Listado de periodos dependientes
+     * - Listado de hitos dependientes
+     *
+     * @param titulo        Título del periodo
+     * @param data          Descripción del periodo
+     * @param fecha1        Fecha de inicio
+     * @param fecha2        Fecha de fin
+     * @param dependecias   Lista de periodos dependientes
+     * @param imagen        Ruta de la imagen asociada
+     * @param HitoDep       Lista de hitos dependientes
+     */
     public void setDataPer(String titulo, String data, int fecha1, int fecha2, ArrayList<Periodo> dependecias, String imagen,ArrayList<Hito> HitoDep){
         String periodosDep="";
         String hitosDep="";
@@ -78,6 +95,19 @@ public class VistaDatoController {
 
     }
 
+    /**
+     * Genera el HTML correspondiente a un Hito.
+     *
+     * Incluye:
+     * - Título y fecha
+     * - Descripción
+     * - Imagen asociada
+     *
+     * @param titulo Título del hito
+     * @param data   Descripción del hito
+     * @param fecha  Fecha del hito
+     * @param imagen Ruta de la imagen asociada
+     */
     public void setDataHit(String titulo,String data,int fecha,String imagen){
         html="<!DOCTYPE html>\n" +
                 "<html lang=\"en\">\n" +
@@ -122,6 +152,10 @@ public class VistaDatoController {
 
     }
 
+    /**
+     * Carga el contenido HTML generado en el WebView
+     * para su visualización.
+     */
     public void cargarHtml(){
         Vista.getEngine().loadContent(html);
     }

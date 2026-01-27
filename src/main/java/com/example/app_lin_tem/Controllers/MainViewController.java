@@ -7,7 +7,7 @@ import com.example.app_lin_tem.Componentes.Controller.ProyectosNubeController;
 import com.example.app_lin_tem.Componentes.HitoUI;
 import com.example.app_lin_tem.Componentes.Lineas;
 import com.example.app_lin_tem.Componentes.PeriodoUI;
-import com.example.app_lin_tem.Componentes.hitoLineas;
+import com.example.app_lin_tem.Componentes.HitoLineas;
 import com.example.app_lin_tem.Model.Hito;
 import com.example.app_lin_tem.Model.JsonMaker;
 import com.example.app_lin_tem.Model.Periodo;
@@ -55,11 +55,11 @@ public class MainViewController {
     private ArrayList<Hito> hitos;
     private Proyecto proyectoActual;
     private HashMap<String,Node> vistas;
-    private HashMap<String,PeriodoController> ControladoresPer;
-    private HashMap<String,HitoController> ControladoresHit;
+    private HashMap<String,PeriodoController> controladoresPer;
+    private HashMap<String,HitoController> controladoresHit;
     private double duracionMin=1,fechaMin=1,fechaMax;
     private int i=1;
-    private String IdToken,refreshToken,uID;
+    private String idToken,refreshToken,uID;
     private LocalTime timer;
     final private String APIKEY="AIzaSyDkC0ZFDN4dNcQCyaLdpRWZpUQ_p_r_O3U";
     private fireBaseData dbApi;
@@ -80,65 +80,76 @@ public class MainViewController {
     };
 
     @FXML
-    private HTMLEditor HTMLEditor;
+    private HTMLEditor htmlEditor;
 
     @FXML
-    private VBox VboxData;
+    private VBox vboxData;
 
     @FXML
-    private ScrollPane contendorLineas,ScrollData;
+    private ScrollPane contendorLineas, scrollData;
 
     @FXML
     private AnchorPane jaulaLineas;
 
     @FXML
-    public TextField NomProyecto;
-    
+    public TextField nomProyecto;
+
     public MainViewController(){
         periodos= new ArrayList<Periodo>();
         hitos= new ArrayList<Hito>();
         proyectoActual= new Proyecto(UUID.randomUUID().toString(),"Sin nombre",periodos,hitos);
         vistas= new HashMap<>();
-        ControladoresPer= new HashMap<>();
-        ControladoresHit= new HashMap<>();
+        controladoresPer = new HashMap<>();
+        controladoresHit = new HashMap<>();
 
 
     }
 
+    /**
+     * Método llamado tras la carga del FXML.
+     * Configura bindings visuales, APIs de Firebase y valores iniciales.
+     */
     public void postInit(){
         contendorLineas.setScaleY(-1);
         contendorLineas.vvalueProperty().bind(jaulaLineas.heightProperty());
         contendorLineas.hvalueProperty().bind(jaulaLineas.widthProperty());
-        IdToken="";
+        idToken ="";
         dbApi=retroFitClient.databaseApi();
         authApi=retroFitClient.authApi();
         tokenApi=retroFitClient.tokenApi();
-        NomProyecto.setText("Sin nombre");
+        nomProyecto.setText("Sin nombre");
 
     }
 
+    /**
+     * Actualiza el nombre del proyecto cuando se modifica el campo de texto.
+     * Si el campo está vacío, se asigna "Sin nombre".
+     */
     @FXML
     protected void onKeyPressNomProyecto(){
-        if(!NomProyecto.getText().equals("")){
-            proyectoActual.setNombre(NomProyecto.getText());
+        if(!nomProyecto.getText().equals("")){
+            proyectoActual.setNombre(nomProyecto.getText());
         }
         else{
             proyectoActual.setNombre("Sin nombre");
-            NomProyecto.setText("Sin nombre");
+            nomProyecto.setText("Sin nombre");
         }
     }
 
+    /**
+     * Añade un nuevo periodo al proyecto y a la interfaz gráfica.
+     */
     @FXML
     protected void onButtonPeridoClick() throws IOException {
-        ScrollData.setVisible(true);
+        scrollData.setVisible(true);
         PeriodoUI periodoUI = new PeriodoUI();
-        VboxData.getChildren().add(periodoUI);
+        vboxData.getChildren().add(periodoUI);
 
 
         PeriodoController periodoController = periodoUI.ctr;
         periodos.add(periodoController.getPeriodo());
         vistas.put(periodoController.getPeriodo().getId(),periodoUI);
-        ControladoresPer.put(periodoController.getPeriodo().getId(),periodoController);
+        controladoresPer.put(periodoController.getPeriodo().getId(),periodoController);
 
 
         periodoController.setMainViewController(this);
@@ -151,25 +162,35 @@ public class MainViewController {
         if(i>10){i=1;}
     }
 
+    /**
+     * Añade un nuevo hito al proyecto y a la interfaz gráfica.
+     */
     @FXML
     protected void onButtonHitoClick() throws IOException {
-        ScrollData.setVisible(true);
+        scrollData.setVisible(true);
         HitoUI hitoUI = new HitoUI();
-        VboxData.getChildren().add(hitoUI);
+        vboxData.getChildren().add(hitoUI);
 
         HitoController hitoController = hitoUI.ctr;
         hitos.add(hitoController.getHito());
         vistas.put(hitoController.getHito().getId(),hitoUI);
-        ControladoresHit.put(hitoController.getHito().getId(),hitoController);
+        controladoresHit.put(hitoController.getHito().getId(),hitoController);
 
         hitoController.setMainViewController(this);
+        hitoController.setFechaIni();
         hitoController.setPeriodos(periodos);
 
     }
 
+    /**
+     * Construye la línea temporal visual:
+     * - Calcula alturas
+     * - Posiciones
+     * - Añade periodos e hitos al panel gráfico
+     */
     @FXML
     protected void onButtonCrearCLick(){
-        ScrollData.setVisible(false) ;
+        scrollData.setVisible(false) ;
 
         jaulaLineas.getChildren().clear();
         calcularAlturasPrimarios(crearArrayOrdenadoLineas());
@@ -205,7 +226,7 @@ public class MainViewController {
                 }
                 setDurFchMinFchMax(0.0,hito.getFecha(),hito.getFecha());
             }
-            hitoLineas hitoLinea= new hitoLineas(hito);
+            HitoLineas hitoLinea= new HitoLineas(hito);
             double x =getPosicion(hito.getFecha());
             double l=hitoLinea.getPrefWidth()/2;
             x= x-(l);
@@ -220,6 +241,11 @@ public class MainViewController {
         }
     }
 
+    /**
+     * Envía un nodo al frente o al fondo del contenedor.
+     * @param node Nodo a modificar
+     * @param Front true para traer al frente, false para enviar atrás
+     */
     public void sendFrontOrBack(Node node,boolean Front){
         if(Front){
             node.toFront();}
@@ -228,8 +254,11 @@ public class MainViewController {
         }
     }
 
+    /**
+     * Calcula la altura de los hitos evitando colisiones.
+     */
     public void alturaHitos(){
-        for(Hito hito:creArrayOrdenadoHito()){
+        for(Hito hito: crearArrayOrdenadoHito()){
             hito.setAltura(40);
             hito.setAlturaDep(146-40);
             hito.setAlturaFinal(146-40);
@@ -240,8 +269,8 @@ public class MainViewController {
                 }
             }
         }
-        for(Hito hito:creArrayOrdenadoHito()){
-            for(Hito hit:creArrayOrdenadoHito()){
+        for(Hito hito: crearArrayOrdenadoHito()){
+            for(Hito hit: crearArrayOrdenadoHito()){
                 if(((hito.getFecha()==hit.getFecha())&&(hit.getAlturaFinal()== hito.getAlturaFinal()))&&hito!=hit){
                     hit.setAlturaDep(hit.getAlturaDep()+30);
                     hit.setAlturaFinal(hit.getAlturaDep());
@@ -250,7 +279,10 @@ public class MainViewController {
         }
     }
 
-
+    /**
+     * Calcula las alturas de los hitos dependientes de un periodo.
+     * @param periodo Periodo padre
+     */
     public void calcularAlturasHitosDep(Periodo periodo){
         ArrayList<Hito> cajaHitos = new ArrayList<>();
         for(Hito hito:hitos){
@@ -277,6 +309,10 @@ public class MainViewController {
         }
     }
 
+    /**
+     * Calcula las alturas base de los periodos principales y sus dependencias.
+     * @param periodosCalcular Lista de periodos padre
+     */
     public void calcularAlturasPrimarios(ArrayList<Periodo> periodosCalcular){
         double alturaMax=0;
         for(Periodo periodo:periodosCalcular){
@@ -353,6 +389,11 @@ public class MainViewController {
         }
     }
 
+    /**
+     * Calcula alturas de periodos dependientes evitando colisiones.
+     * @param alturaIni Altura inicial
+     * @param lista Lista de periodos dependientes
+     */
     public void calcularAlturaDependientes(double alturaIni, ArrayList<Periodo> lista){
 
 
@@ -405,23 +446,41 @@ public class MainViewController {
 
     }
 
-    //calculo de tamaño en funcion de el periodo con menor duracion
+    /**
+     * Calcula el ancho visual de un periodo en función de su duración.
+     * @param Duracion Duración del periodo
+     * @return Ancho en píxeles
+     */
     private double getTamaño(double Duracion){
         return 200*(Duracion /duracionMin);
     }
 
+    /**
+     * Calcula la posición horizontal en función de la fecha.
+     * @param Fecha1 Fecha inicial
+     * @return Posición X
+     */
     private double getPosicion(int Fecha1){
 
         return Math.abs((((Fecha1)/duracionMin)*200+20)-(((fechaMin)/duracionMin)*200)) ;
     }
 
+    /**
+     * Muestra o Oculta scrollData
+     */
     @FXML
     protected void onActionBottonMostrar(){
-        ScrollData.setVisible(!ScrollData.isVisible());
+        scrollData.setVisible(!scrollData.isVisible());
 
     }
 
-    //devuelve un arrarylist con los periodos padres ordenados por fecha y duracion
+    /**
+     * Genera un ArrayList con los periodos que no tienen dependencia (sin padre),
+     * ordenados primero por la fecha inicial (fecha1) de forma ascendente y,
+     * en caso de empate, por la duración en orden descendente.
+     *
+     * @return lista de periodos sin dependencia ordenados por fecha y duración
+     */
     public ArrayList<Periodo> crearArrayOrdenadoLineas(){
         ArrayList<Periodo> lineas = new ArrayList<>();
         for(Periodo periodo : periodos){
@@ -434,8 +493,13 @@ public class MainViewController {
         return lineas;
     }
 
-    //devuelve un arrarylist con los hitos sin padres ordenados por fecha
-    public ArrayList<Hito> creArrayOrdenadoHito(){
+    /**
+     * Genera un ArrayList con los hitos que no tienen dependencia (sin padre),
+     * ordenados por la fecha de forma ascendente
+     *
+     * @return lista de hitos sin dependencia ordenados por fecha
+     */
+    public ArrayList<Hito> crearArrayOrdenadoHito(){
         ArrayList<Hito> ordenada= new ArrayList<>();
         for(Hito hito : hitos){
             if(hito.getDependencia()==null){
@@ -448,7 +512,9 @@ public class MainViewController {
         return ordenada;
     }
 
-    //genera un div HTML con la informacion del periodo
+    /**
+     * Genera un bloque HTML con la información de un periodo.
+     */
     public String getDivPer(Periodo periodo,int pad){
         String imagen="";
         if(periodo.getImagen()!=null){
@@ -466,7 +532,9 @@ public class MainViewController {
                 "</div>";
     }
 
-    //genera un div HTML con la informacion del hito
+    /**
+     * Genera un bloque HTML con la información de un hito.
+     */
     public String getDivHit(Hito hito,int pad){
         String imagen="";
         if(hito.getImagen()!=null){
@@ -482,6 +550,10 @@ public class MainViewController {
                 +"</div>";
     }
 
+    /**
+     * Genera recursivamente el texto HTML
+     * de un periodo con sus dependencias.
+     */
     public String getTexto(Periodo periodo, int pad){
         String texto="";
         texto=getDivPer(periodo,pad);
@@ -568,12 +640,15 @@ public class MainViewController {
         return texto;
     }
 
+    /**
+     * Carga el esquema HTML completo en el editor.
+     */
     @FXML
     public void cargarEsquema(){
         String texto="";
         int pad=10;
         ArrayList<Periodo> listPer=crearArrayOrdenadoLineas();
-        ArrayList<Hito> listHit=creArrayOrdenadoHito();
+        ArrayList<Hito> listHit= crearArrayOrdenadoHito();
         //hay mas Hitos
         int iterP=0,iterH=0,fchAntMen;
         while (iterP < listPer.size() && iterH < listHit.size()){
@@ -599,10 +674,13 @@ public class MainViewController {
 
 
 
-        HTMLEditor.setHtmlText(texto);
+        htmlEditor.setHtmlText(texto);
 
     }
 
+    /**
+     * Convierte HTML generado a XHTML compatible con OpenHTMLToPDF.
+     */
     private String htmlToXhtml(final String html) {
         final Document document = Jsoup.parse(html);
         document.outputSettings().syntax(Document.OutputSettings.Syntax.xml);
@@ -637,6 +715,9 @@ public class MainViewController {
         return doc.html();
     }
 
+    /**
+     * Exporta el contenido HTML a un archivo PDF.
+     */
     @FXML
     public void imprimirPdf(){
         FileChooser fileChooser = new FileChooser();
@@ -655,7 +736,7 @@ public class MainViewController {
             if (!file.toString().endsWith(".pdf")) {
                 file = new File(file.toString() + ".pdf");
             }
-            String html = htmlToXhtml(HTMLEditor.getHtmlText());
+            String html = htmlToXhtml(htmlEditor.getHtmlText());
 
             try (OutputStream os = new FileOutputStream(file)) {
                 PdfRendererBuilder builder = new PdfRendererBuilder();
@@ -668,6 +749,9 @@ public class MainViewController {
         }catch (NullPointerException _){}
     }
 
+    /**
+     * Exporta la línea temporal como imagen PNG.
+     */
     @FXML
     public void imprimirLinea(){
         FileChooser fileChooser = new FileChooser();
@@ -699,6 +783,10 @@ public class MainViewController {
         }catch (NullPointerException _){}
     }
 
+    /**
+     * Elimina un periodo y limpia sus dependencias asociadas.
+     * @param periodo Periodo a eliminar
+     */
     public void delVistaPer(Periodo periodo){
         String id= periodo.getId();
         for(Periodo depencia:periodos){
@@ -706,7 +794,7 @@ public class MainViewController {
                 if(depencia.getDependencia().getId().equals(id)){
                     depencia.setDependencia(null);
 
-                    ControladoresPer.get(depencia.getId()).setComboBox(" ");
+                    controladoresPer.get(depencia.getId()).setComboBox(" ");
 
                 }
             } catch (NullPointerException e) {}
@@ -715,22 +803,29 @@ public class MainViewController {
             try{
                 if(depencia.getDependencia().getId().equals(id)){
                     depencia.setDependencia(null);
-                   ControladoresHit.get(depencia.getId()).setComboBox(" ");
+                   controladoresHit.get(depencia.getId()).setComboBox(" ");
                 }
             } catch (NullPointerException e) {}
         }
         periodos.remove(periodo);
 
-        VboxData.getChildren().remove(vistas.get(id));
+        vboxData.getChildren().remove(vistas.get(id));
 
     }
 
+    /**
+     * Elimina un hito de la vista y del modelo.
+     * @param hito Hito a eliminar
+     */
     public void delVistaHit(Hito hito){
         String id=hito.getId();
         hitos.remove(hito);
-        VboxData.getChildren().remove(vistas.get(id));
+        vboxData.getChildren().remove(vistas.get(id));
     }
 
+    /**
+     * Actualiza los valores mínimos y máximos de fechas y duración.
+     */
     public void setDurFchMinFchMax(double duracion,int Fch1,int Fch2){
         if(Fch1!=Fch2){
         duracionMin=duracion;}
@@ -747,10 +842,18 @@ public class MainViewController {
         }
     }
 
+    /**
+     * Bloquea los campos de los periodos padre
+     * @param periodo padre
+     */
     public void bloqCamposPorDepencdencia(Periodo periodo){
-        ControladoresPer.get(periodo.getId()).bloquearHabilitarCampos();
+        controladoresPer.get(periodo.getId()).bloquearHabilitarCampos();
     }
 
+    /**
+     * Crea un nuevo proyecto vacío tras confirmación del usuario.
+     * Elimina toda la información actual del proyecto.
+     */
     @FXML
     public void nuevoProyecto(){
         Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
@@ -761,16 +864,19 @@ public class MainViewController {
             periodos= new ArrayList<Periodo>();
             hitos= new ArrayList<Hito>();
             proyectoActual=new Proyecto(UUID.randomUUID().toString(),"Sin nombre",periodos,hitos);
-            VboxData.getChildren().clear();
+            vboxData.getChildren().clear();
             jaulaLineas.getChildren().clear();
-            HTMLEditor.setHtmlText("");
-            NomProyecto.setText("Sin nombre");
+            htmlEditor.setHtmlText("");
+            nomProyecto.setText("Sin nombre");
             vistas.clear();
-            ControladoresPer.clear();
-            ControladoresHit.clear();
+            controladoresPer.clear();
+            controladoresHit.clear();
         }
     }
 
+    /**
+     * Guarda el proyecto actual en un archivo JSON local.
+     */
     @FXML
     public void GuardarLocal(){
         FileChooser fileChooser = new FileChooser();
@@ -797,12 +903,18 @@ public class MainViewController {
         }
     }
 
+    /**
+     * Carga un proyecto y reemplaza el actual.
+     */
     @FXML
     public void cargarLocal(){
        proyectoCargado(cargarJson());
        rellenarVbox(proyectoActual.getPeriodos(),proyectoActual.getHitos());
     }
 
+    /**
+     * Añade un proyecto cargado al proyecto actual.
+     */
     @FXML
     public void anadirLocal(){
         Proyecto proyecto = cargarJson();
@@ -830,12 +942,16 @@ public class MainViewController {
             }
             setIdDependecias(proyecto.getPeriodos());
             hitos.addAll(proyecto.getHitos());
-            VboxData.getChildren().clear();
+            vboxData.getChildren().clear();
             jaulaLineas.getChildren().clear();
             rellenarVbox(periodos,hitos);
 
     }
 
+    /**
+     * Actualiza los IDs de dependencias tras añadir proyectos.
+     * @param listaPeriodos lista de periodos
+     */
     public void setIdDependecias(ArrayList<Periodo> listaPeriodos){
         for(Periodo periodo:listaPeriodos){
             if(!periodo.getPeriodosDependientes().isEmpty()){
@@ -856,19 +972,24 @@ public class MainViewController {
     }
 
     public void proyectoCargado(Proyecto proyecto){
-        VboxData.getChildren().clear();
+        vboxData.getChildren().clear();
         jaulaLineas.getChildren().clear();
 
         proyectoActual=proyecto;
         vistas.clear();
-        ControladoresPer.clear();
-        ControladoresHit.clear();
-        NomProyecto.setText(proyectoActual.getNombre());
+        controladoresPer.clear();
+        controladoresHit.clear();
+        nomProyecto.setText(proyectoActual.getNombre());
         periodos=proyectoActual.getPeriodos();
         hitos=proyectoActual.getHitos();
         asignarDependecias(proyectoActual.getPeriodos(),proyectoActual.getHitos());
     }
 
+    /**
+     * Rellena el vbox con los nuevos hitos y periodos
+     * @param listaPeriodos lista de periodos
+     * @param listaHitos lista de hitos
+     */
     public void rellenarVbox(ArrayList<Periodo> listaPeriodos,ArrayList<Hito> listaHitos){
         listaPeriodos.sort((per1,per2)->{
             return per1.getFecha1()-per2.getFecha1();
@@ -878,7 +999,7 @@ public class MainViewController {
         });
         for(Periodo periodo:listaPeriodos){
             PeriodoUI periodoUI = new PeriodoUI();
-            VboxData.getChildren().add(periodoUI);
+            vboxData.getChildren().add(periodoUI);
 
 
             PeriodoController periodoController = periodoUI.ctr;
@@ -890,14 +1011,14 @@ public class MainViewController {
             periodoController.setPeriodos(periodos);
             periodoController.setPeriodo(periodo);
             vistas.put(periodoController.getPeriodo().getId(),periodoUI);
-            ControladoresPer.put(periodoController.getPeriodo().getId(),periodoController);
+            controladoresPer.put(periodoController.getPeriodo().getId(),periodoController);
 
             periodoController.setCampos();
         }
 
         for(Hito hito:listaHitos){
             HitoUI hitoUI = new HitoUI();
-            VboxData.getChildren().add(hitoUI);
+            vboxData.getChildren().add(hitoUI);
 
             HitoController hitoController = hitoUI.ctr;
 
@@ -907,7 +1028,7 @@ public class MainViewController {
             hitoController.setHito(hito);
             hitoController.setDatos();
             vistas.put(hitoController.getHito().getId(),hitoUI);
-            ControladoresHit.put(hitoController.getHito().getId(),hitoController);
+            controladoresHit.put(hitoController.getHito().getId(),hitoController);
             hitoController.setPeriodos(periodos);
 
         }
@@ -915,6 +1036,12 @@ public class MainViewController {
 
     }
 
+    /**
+     * Asigna dependencias entre periodos e hitos
+     * a partir de los IDs cargados.
+     * @param listaPeriodos lista de periodos
+     * @param listaHitos lista de hitos
+     */
     public void asignarDependecias(ArrayList<Periodo> listaPeriodos,ArrayList<Hito> listaHitos){
         for(Periodo periodo: listaPeriodos){
             for (Periodo per : listaPeriodos){
@@ -937,6 +1064,10 @@ public class MainViewController {
         }
     }
 
+    /**
+     * Carga un proyecto desde un archivo JSON.
+     * @return Proyecto cargado o null si falla
+     */
     public Proyecto cargarJson(){
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("selecciona el fichero");
@@ -970,6 +1101,9 @@ public class MainViewController {
         return null;
     }
 
+    /**
+     * Abre la ventana de inicio de sesión.
+     */
     @FXML
     public void iniciarSesionUI(){
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/app_lin_tem/Login.fxml"));
@@ -990,6 +1124,9 @@ public class MainViewController {
         } catch (IOException e) {}
     }
 
+    /**
+     * Muestra una notificación emergente.
+     */
     public void toast(String texto){
         Notifications.create()
                 .text(texto)
@@ -998,6 +1135,9 @@ public class MainViewController {
                 .showInformation();
     }
 
+    /**
+     * Abre la ventana de crear sesión.
+     */
     @FXML
     public void crearSesion(){
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/app_lin_tem/Login.fxml"));
@@ -1020,6 +1160,9 @@ public class MainViewController {
         } catch (IOException e) {}
     }
 
+    /**
+     * Crea una cuenta nueva en Firebase Authentication.
+     */
     public boolean crearSesionUI(String email,String contraseña) throws IOException {
         AuthRequest request= new AuthRequest(email,contraseña);
 
@@ -1028,7 +1171,7 @@ public class MainViewController {
         AuthResponse auth = authApi.crearCuenta(APIKEY,request).execute().body();
 
         if (response.isSuccessful() && response.body() != null) {
-            IdToken = response.body().idToken;
+            idToken = response.body().idToken;
             refreshToken = response.body().refreshToken;
             uID=response.body().localId;
             timer = LocalTime.now();
@@ -1058,6 +1201,9 @@ public class MainViewController {
         return false;
     }
 
+    /**
+     * Inicia sesión con Firebase Authentication.
+     */
     public boolean iniciarSesionUI(String email, String contraseña) throws IOException {
         AuthRequest request= new AuthRequest(email,contraseña);
 
@@ -1065,7 +1211,7 @@ public class MainViewController {
                 authApi.iniciarSesion(APIKEY,request).execute();
 
         if(response.isSuccessful()&&response.body()!=null){
-            IdToken = response.body().idToken;
+            idToken = response.body().idToken;
             refreshToken = response.body().refreshToken;
             uID=response.body().localId;
             timer = LocalTime.now();
@@ -1092,10 +1238,13 @@ public class MainViewController {
         return false;
     }
 
+    /**
+     * Guarda el proyecto actual en Firebase.
+     */
     @FXML
     public void guardarDatosNube() throws IOException {
 
-        if(IdToken.equals("")){
+        if(idToken.equals("")){
             Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
             confirmation.setHeaderText("Tienes que iniciar sesion");
             confirmation.showAndWait();
@@ -1108,11 +1257,11 @@ public class MainViewController {
                     APIKEY,
                     "refresh_token",
                     refreshToken).execute().body();
-            IdToken=response.id_token;
+            idToken =response.id_token;
             refreshToken=response.refresh_token;
             timer = LocalTime.now();
         }
-        Response<Proyecto> response = dbApi.saveProyecto(uID,proyectoActual.getId(),IdToken,proyectoActual).execute();
+        Response<Proyecto> response = dbApi.saveProyecto(uID,proyectoActual.getId(), idToken,proyectoActual).execute();
         if(response.isSuccessful()){
             toast("Archivo guardado correctamente");
         }
@@ -1122,23 +1271,37 @@ public class MainViewController {
         }
     }
 
+    /**
+     * Carga proyectos almacenados en la nube.
+     */
     @FXML
     public void obtenerProyectosCargar() throws IOException {
         cargarProyectosNube(true,false);
     }
 
+    /**
+     * Añade un proyecto almacenado en la nube.
+     */
     @FXML
     public void obtenerProyectosAnadir() throws IOException {
         cargarProyectosNube(false,false);
     }
 
+    /**
+     * Elimina un proyecto almacenado en Firebase.
+     */
     @FXML
     public void obtenerProyectoEliminar() throws IOException {
         cargarProyectosNube(false,true);
     }
 
+    /**
+     * Carga proyectos desde la nube.
+     * @param cargar sí se debe cargar el proyecto
+     * @param eliminar Si se debe eliminar
+     */
     public void cargarProyectosNube(boolean cargar,boolean eliminar) throws IOException {
-        if(IdToken.equals("")){
+        if(idToken.equals("")){
             Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
             confirmation.setHeaderText("Tienes que iniciar sesion");
             confirmation.showAndWait();
@@ -1151,11 +1314,11 @@ public class MainViewController {
                         APIKEY,
                         "refresh_token",
                         refreshToken).execute().body();
-                IdToken=response.id_token;
+                idToken =response.id_token;
                 refreshToken=response.refresh_token;
                 timer = LocalTime.now();
             }
-            Response<Map<String, Proyecto>> response = dbApi.getProyectos(uID,IdToken).execute();
+            Response<Map<String, Proyecto>> response = dbApi.getProyectos(uID, idToken).execute();
             if(response.isSuccessful()){
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/app_lin_tem/Componentes/proyectosNube.fxml"));
 
@@ -1183,9 +1346,14 @@ public class MainViewController {
         }
     }
 
+    /**
+     * Elimina un proyecto almacenado en la nube.
+     * @param id ID del proyecto
+     * @return true si se elimina correctamente
+     */
     public boolean eliminarProyecto(String id){
         try {
-            if(IdToken.equals("")){
+            if(idToken.equals("")){
                 Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
                 confirmation.setHeaderText("Tienes que iniciar sesion");
                 confirmation.showAndWait();
@@ -1198,11 +1366,11 @@ public class MainViewController {
                             APIKEY,
                             "refresh_token",
                             refreshToken).execute().body();
-                    IdToken=response.id_token;
+                    idToken =response.id_token;
                     refreshToken=response.refresh_token;
                     timer = LocalTime.now();
                 }
-            Response<Void> response= dbApi.deleteProyecto(uID,id,IdToken).execute();
+            Response<Void> response= dbApi.deleteProyecto(uID,id, idToken).execute();
             if(response.isSuccessful()){
                 return true;
             }

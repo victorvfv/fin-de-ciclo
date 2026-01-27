@@ -21,7 +21,4 @@ public class MainClass extends Application {
         MainViewController ctr = fxmlLoader.getController();
         ctr.postInit();
     }
-
-
-
 }

@@ -38,7 +38,6 @@ public class PeriodoController {
     private TitledPane Pestaña;
 
 
-
     private Periodo periodo;
 
     private String fechaPrev1,fechaPrev2;
@@ -54,6 +53,9 @@ public class PeriodoController {
 
     }
 
+    /**
+     * Rellena los campos visuales con los datos del periodo.
+     */
     public void setCampos(){
         NomPer.setText(periodo.getTitulo());
         Dato.setText(periodo.getDatos());
@@ -65,25 +67,44 @@ public class PeriodoController {
         color.setValue((Color.web(periodo.getColor())));
     }
 
+    /**
+     * Asigna el periodo al controlador.
+     * @param periodo periodo a gestionar
+     */
     public void setPeriodo(Periodo periodo) {
         this.periodo = periodo;
     }
 
+    /**
+     * Asigna el controlador principal.
+     * @param mainViewController controlador principal
+     */
     public void setMainViewController(MainViewController mainViewController){
         this.mainViewController = mainViewController;
 
     }
 
+    /**
+     * Asigna la lista de periodos disponibles.
+     * @param periodos lista de periodos
+     */
     public void setPeriodos(ArrayList periodos){
         this.periodos=periodos;
 
     }
 
+    /**
+     * Inicializa las fechas por defecto.
+     */
     public void setFechasIni(){
         Fecha1.setText("1");
         Fecha2.setText("2");
     }
 
+    /**
+     * Valida cambios en la fecha inicial.
+     * Evita ceros y caracteres no numéricos.
+     */
     @FXML
     protected void OnFechaChanged1(){
         if(Fecha1.getText().equals("0")){
@@ -103,6 +124,9 @@ public class PeriodoController {
 
     }
 
+    /**
+     * Guarda el valor previo de la fecha inicial.
+     */
     @FXML
     protected void OnFechaKeyPress1(){
         if(Fecha1.getText().matches("-?[0-9]*")) {
@@ -112,6 +136,9 @@ public class PeriodoController {
         }
     }
 
+    /**
+     * Valida cambios en la fecha final.
+     */
     @FXML
     protected void OnFechaChanged2(){
         if(Fecha2.getText().equals("0")){
@@ -131,6 +158,9 @@ public class PeriodoController {
 
     }
 
+    /**
+     * Guarda el valor previo de la fecha final.
+     */
     @FXML
     protected void OnFechaKeyPress2(){
         if(Fecha2.getText().matches("[0-9]*")) {
@@ -140,12 +170,24 @@ public class PeriodoController {
         }
     }
 
+    /**
+     * Aplica las fechas cuando se confirma la edición.
+     */
     @FXML
     protected void  OnActionFecha2(){
         setFechas();
     }
 
+    /**
+     * Valida y asigna las fechas al periodo.
+     * Comprueba:
+     * - Orden correcto
+     * - Contención en el periodo padre
+     * - Actualiza duración global
+     */
     private void setFechas(){
+        int fchPrev1=periodo.getFecha1();
+        int fchPrev2=periodo.getFecha2();
         int fecha1;
         int fecha2;
         try {
@@ -170,7 +212,22 @@ public class PeriodoController {
             fecha1=fecha1*(-1);
             fecha2=fecha2*(-1);
         }
-
+        if(periodo.getDependencia()!=null){
+            boolean fallo=false;
+            if(fecha1<periodo.getDependencia().getFecha1()){
+                fecha1=fchPrev1;
+                Fecha1.setText(""+fecha1);
+                fallo=true;
+            }
+            if(fecha2>periodo.getDependencia().getFecha2()){
+                fecha2=fchPrev2;
+                Fecha2.setText(""+fecha2);
+                fallo=true;
+            }
+            if(fallo){
+                mainViewController.toast("El periodo ha de ser contenido por padre");
+            }
+        }
         periodo.setFecha1(fecha1);
         periodo.setFecha2(fecha2);
         Dato.requestFocus();
@@ -178,6 +235,9 @@ public class PeriodoController {
         mainViewController.setDurFchMinFchMax(periodo.getDuracion(),periodo.getFecha1(),periodo.getFecha2());
     }
 
+    /**
+     * Actualiza la pestaña al cambiar el título
+     * */
     @FXML
     protected void  OnActionTitulo(){
         Fecha1.requestFocus();
@@ -189,6 +249,11 @@ public class PeriodoController {
         periodo.setColor(color.getValue());
     }
 
+    /**
+     * Actualiza la dependencia del periodo según ComboBox
+     * - Ajusta dependencias circulares
+     * - Ajusta colores de periodos dependientes
+     */
     @FXML
     protected void onActionComboBox(){
         for(Periodo periodoDep: periodos){
@@ -224,6 +289,10 @@ public class PeriodoController {
 
     }
 
+    /**
+     * Rellena el ComboBox con periodos válidos
+     * para dependencia evitando ciclos.
+     */
     @FXML
     public void setDependecias(){
         ArrayList<String> nombres = new ArrayList<>();
@@ -256,6 +325,11 @@ public class PeriodoController {
         return periodo;
     }
 
+    /**
+     * Elimina el periodo con confirmación.
+     * - Actualiza dependencias de otros periodos
+     * - Notifica al controlador principal
+     */
     @FXML
     public void eliminar(){
         Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
@@ -294,12 +368,17 @@ public class PeriodoController {
         periodo.setColor(color);
     }
 
+    /** Bloquea o habilita los campos de entrada */
     public void bloquearHabilitarCampos(){
         Fecha1.setDisable(!Fecha1.isDisable());
         Fecha2.setDisable(!Fecha2.isDisable());
         NomPer.setDisable(!NomPer.isDisable());
     }
 
+    /**
+     * Calcula un color derivado para periodos dependientes
+     * evitando que el color principal se repita exactamente
+     */
     private Color colorDependiente(Double red,Double green, Double blue){
         Random random = new Random();
         double mayor =Math.max(red,blue);
@@ -316,6 +395,10 @@ public class PeriodoController {
         }
     }
 
+    /**
+     * Abre un FileChooser para seleccionar una imagen
+     * asociada al periodo.
+     */
     @FXML
     protected void añadirImagen(){
         FileChooser fileChooser = new FileChooser();

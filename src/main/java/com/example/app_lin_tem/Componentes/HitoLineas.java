@@ -1,22 +1,20 @@
 package com.example.app_lin_tem.Componentes;
 
-import com.example.app_lin_tem.Componentes.Controller.LineasController;
-import com.example.app_lin_tem.Componentes.Controller.hitoLineasController;
+import com.example.app_lin_tem.Componentes.Controller.HitoLineasController;
 import com.example.app_lin_tem.Controllers.MainViewController;
 import com.example.app_lin_tem.Model.Hito;
-import com.example.app_lin_tem.Model.Periodo;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.AnchorPane;
 
 import java.io.IOException;
 
-public class hitoLineas extends AnchorPane {
+public class HitoLineas extends AnchorPane {
 
-    public hitoLineasController ctr;
+    public HitoLineasController ctr;
 
-    public hitoLineas(Hito hito){
+    public HitoLineas(Hito hito){
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/app_lin_tem/Componentes/hitoLineas.fxml"));
-        ctr= new hitoLineasController(hito);
+        ctr= new HitoLineasController(hito);
         loader.setRoot(this);
         loader.setController(ctr);
         try {

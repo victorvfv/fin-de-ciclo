@@ -38,23 +38,15 @@ public class LineasController {
         this.periodo=periodo;
     }
 
-
+    /**
+     * Ajusta el tamaño visual de la línea y
+     * de su contenedor base según la duración del periodo.
+     *
+     * @param n ancho a asignar
+     */
     public void setTamaño(double n){
         base.setPrefWidth(n);
         linea.setWidth(n);
-        //Random random = new Random();
-       // double mayor =Math.max(red,blue);
-        //mayor=Math.max(mayor,green);
-        //Paint pintura = new Color(random.nextDouble(0.75), random.nextDouble(0.75), random.nextDouble(0.75), 1);
-        //if(red==mayor){
-       //     pintura = new Color(red, random.nextDouble(0.75), random.nextDouble(0.75), 1);
-        //} else if (green==mayor) {
-        //    pintura = new Color(random.nextDouble(0.75), green, random.nextDouble(0.75), 1);
-        //}else if (blue==mayor) {
-        //    pintura = new Color(random.nextDouble(0.75), random.nextDouble(0.75), blue, 1);
-        //}
-
-        //linea.setFill(pintura);
     }
 
     public String getId() {
@@ -70,18 +62,33 @@ public class LineasController {
         this.ctr = ctr;
     }
 
+    /**
+     * Evento que se ejecuta cuando el ratón
+     * entra en la línea del periodo.
+     * Aumenta la opacidad para resaltar el elemento.
+     */
     @FXML
     public void Ratondentro(){
 
         linea.setOpacity(0.75);
     }
 
+    /**
+     * Evento que se ejecuta cuando el ratón
+     * sale de la línea del periodo.
+     * Reduce la opacidad a su estado normal.
+     */
     @FXML
     public void Ratonfuera(){
         linea.setOpacity(0.5);
     }
 
-
+    /**
+     * Carga la información del periodo en la vista:
+     * - Fechas
+     * - Título
+     * - Color asociado
+     */
     public void setInfo() {
         fch1.setText(""+ Math.abs(periodo.getFecha1()));
         fch2.setText(""+Math.abs(periodo.getFecha2()));
@@ -93,6 +100,13 @@ public class LineasController {
         return periodo;
     }
 
+    /**
+     * Evento asociado al click sobre la línea.
+     *
+     * Abre una nueva ventana que muestra
+     * la información detallada del periodo
+     * utilizando un WebView.
+     */
     @FXML
     public void onCLick(){
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/app_lin_tem/Componentes/VistaDato.fxml"));

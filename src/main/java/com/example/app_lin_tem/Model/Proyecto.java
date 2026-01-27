@@ -4,32 +4,32 @@ import java.util.ArrayList;
 
 public class Proyecto {
 
-    private String Id;
-    private String Nombre;
+    private String id;
+    private String nombre;
     private ArrayList<Periodo> periodos;
     private ArrayList<Hito> hitos;
 
     public Proyecto(String id, String nombre, ArrayList<Periodo> periodos, ArrayList<Hito> hitos) {
-        Id = id;
-        Nombre = nombre;
+        this.id = id;
+        this.nombre = nombre;
         this.periodos = periodos;
         this.hitos = hitos;
     }
 
     public String getId() {
-        return Id;
+        return id;
     }
 
     public void setId(String id) {
-        Id = id;
+        this.id = id;
     }
 
     public String getNombre() {
-        return Nombre;
+        return nombre;
     }
 
     public void setNombre(String nombre) {
-        Nombre = nombre;
+        this.nombre = nombre;
     }
 
     public ArrayList<Periodo> getPeriodos() {

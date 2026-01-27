@@ -1,6 +1,6 @@
 package com.example.app_lin_tem.Componentes.Controller;
 
-import com.example.app_lin_tem.Componentes.hitoLineas;
+import com.example.app_lin_tem.Componentes.HitoLineas;
 import com.example.app_lin_tem.Controllers.MainViewController;
 import com.example.app_lin_tem.Model.Hito;
 import javafx.fxml.FXML;
@@ -14,7 +14,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 
-public class hitoLineasController {
+public class HitoLineasController {
     @FXML
     private Label titulo;
 
@@ -25,22 +25,31 @@ public class hitoLineasController {
 
     private MainViewController ctr;
 
-    private hitoLineas nodo;
+    private HitoLineas nodo;
 
-    public hitoLineas getNodo() {
+    public HitoLineas getNodo() {
         return nodo;
     }
 
-    public void setNodo(hitoLineas nodo) {
+    public void setNodo(HitoLineas nodo) {
         this.nodo = nodo;
     }
 
-    public hitoLineasController(Hito hito) {
+    public HitoLineasController(Hito hito) {
         this.hito = hito;
     }
 
+    /**
+     * Configura la información visual del hito:
+     * - Título
+     * - Fecha (normal o A.C si es negativa)
+     */
     public void setInfo(){
-        titulo.setText(hito.getTitulo()+" "+Math.abs(hito.getFecha()));
+        String fecha = ""+hito.getFecha();
+        if(hito.getFecha()<0){
+            fecha=Math.abs(hito.getFecha())+" A.C";
+        }
+        titulo.setText(hito.getTitulo()+" "+fecha);
     }
 
     public void setCtr(MainViewController ctr) {
@@ -51,6 +60,12 @@ public class hitoLineasController {
         linea.setEndY(hito.getAlturaDep());
     }
 
+    /**
+     * Evento asociado al click sobre el hito.
+     *
+     * Abre una ventana con la información detallada
+     * del hito utilizando un WebView.
+     */
     @FXML
     public void onCLick(){
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/app_lin_tem/Componentes/VistaDato.fxml"));
@@ -70,7 +85,13 @@ public class hitoLineasController {
 
     }
 
-
+    /**
+     * Evento cuando el ratón entra sobre el hito
+     * (etiqueta).
+     *
+     * Resalta visualmente el hito y lo trae
+     * al primer plano.
+     */
     @FXML
     public void ratonDentro(){
         linea.setStrokeWidth(3);
@@ -79,6 +100,12 @@ public class hitoLineasController {
         ctr.sendFrontOrBack(nodo,true);
     }
 
+    /**
+     * Evento cuando el ratón sale del hito
+     * (etiqueta).
+     *
+     * Devuelve el hito a su estado visual normal.
+     */
     @FXML
     public void ratonFuera(){
         titulo.setOpacity(0.75);
@@ -86,6 +113,9 @@ public class hitoLineasController {
         ctr.sendFrontOrBack(nodo,false);
     }
 
+    /**
+     * Evento cuando el ratón entra sobre la línea del hito.
+     */
     @FXML
     public void ratonDentroLinea(){
         linea.setStrokeWidth(3);
@@ -94,6 +124,9 @@ public class hitoLineasController {
         ctr.sendFrontOrBack(nodo,true);
     }
 
+    /**
+     * Evento cuando el ratón sale de la línea del hito.
+     */
     @FXML
     public void ratonFueraLinea(){
         titulo.setOpacity(0.75) ;

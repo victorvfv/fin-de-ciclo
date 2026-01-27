@@ -5,83 +5,83 @@ import java.util.UUID;
 public class Hito {
 
 
-    private String Titulo, Id;
-    private int Fecha;
-    private String Datos;
-    private double Altura, alturaDep,alturaFinal;
+    private String titulo, id;
+    private int fecha;
+    private String datos;
+    private double altura, alturaDep,alturaFinal;
     private String imagen;
     private String dependenciaId;
-    private transient Periodo Dependencia;
+    private transient Periodo dependencia;
 
 
     public Hito() {
-        Id = UUID.randomUUID().toString();
-        Titulo = "";
-        Fecha = 1;
-        Datos = "";
+        id = UUID.randomUUID().toString();
+        titulo = "";
+        fecha = 1;
+        datos = "";
     }
 
     public Hito(String titulo, int fecha, String datos, Periodo dependencia,String id) {
-        Titulo = titulo;
-        Fecha = fecha;
-        Datos = datos;
-        Dependencia = dependencia;
-        Id =id;
+        this.titulo = titulo;
+        this.fecha = fecha;
+        this.datos = datos;
+        this.dependencia = dependencia;
+        this.id =id;
     }
 
     public String getTitulo() {
-        return Titulo;
+        return titulo;
     }
 
     public void setTitulo(String titulo) {
-        Titulo = titulo;
+        this.titulo = titulo;
     }
 
     public int getFecha() {
-        return Fecha;
+        return fecha;
     }
 
     public void setFecha(int fecha) {
-        Fecha = fecha;
+        this.fecha = fecha;
     }
 
     public String getDatos() {
-        return Datos;
+        return datos;
     }
 
     public void setDatos(String datos) {
-        Datos = datos;
+        this.datos = datos;
     }
 
     public Periodo getDependencia() {
-        return Dependencia;
+        return dependencia;
     }
 
     public void setDependencia(Periodo dependencia) {
-        Dependencia = dependencia;
+        this.dependencia = dependencia;
         if(dependencia!=null){
         dependenciaId = dependencia.getId();}
     }
 
     public String getId() {
-        return Id;
+        return id;
     }
 
     public void setId(String id) {
-        this.Id = id;
+        this.id = id;
     }
 
 
     public double getAltura() {
-        return Altura;
+        return altura;
     }
 
     public void setAltura(double altura) {
-        Altura=altura;
+        this.altura =altura;
     }
 
     public void addAltura(double add){
-        Altura=Altura+add;
+        altura = altura +add;
     }
 
 

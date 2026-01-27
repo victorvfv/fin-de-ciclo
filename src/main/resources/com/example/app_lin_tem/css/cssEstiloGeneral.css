@@ -1,6 +1,4 @@
-/* ======================================================
-   GOOGLE DOCS STYLE — GLOBAL
-   ====================================================== */
+
 
 .root {
     -fx-font-family: "Segoe UI", "Roboto", sans-serif;
@@ -8,9 +6,7 @@
     -fx-text-fill: #202124;
 }
 
-/* ======================================================
-   TITLED PANE (HITO / PERIODO)
-   ====================================================== */
+
 
 .titled-pane {
     -fx-background-color: white;
@@ -36,9 +32,7 @@
     -fx-background-color: white;
 }
 
-/* ======================================================
-   TEXT INPUTS
-   ====================================================== */
+
 
 .text-field,
 .password-field,
@@ -65,12 +59,17 @@
    COMBOBOX & COLOR PICKER
    ====================================================== */
 
+.combo-box{
+    -fx-cell-size: 30px;
+}
+
 .combo-box,
 .color-picker {
     -fx-background-color: white;
     -fx-border-color: #dadce0;
     -fx-border-radius: 4;
     -fx-background-radius: 4;
+
 }
 
 .combo-box:focused,

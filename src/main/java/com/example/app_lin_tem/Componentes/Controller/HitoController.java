@@ -6,7 +6,7 @@ import com.example.app_lin_tem.Model.Periodo;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.paint.Color;
+
 import javafx.stage.FileChooser;
 
 import java.io.File;
@@ -36,6 +36,8 @@ public class HitoController  {
 
     private Hito hito;
 
+
+
     private MainViewController mainViewController;
 
     private ArrayList<Periodo> periodos;
@@ -45,6 +47,9 @@ public class HitoController  {
         periodos = new ArrayList<Periodo>();
     }
 
+    /**
+     * Carga los datos del hito en los campos de la interfaz.
+     */
     public void setDatos(){
         NomHit.setText(hito.getTitulo());
         Dato.setText(hito.getDatos());
@@ -74,6 +79,9 @@ public class HitoController  {
         return hito;
     }
 
+    /**
+     * Valida que solo se introduzcan números en la fecha.
+     */
     @FXML
     protected void OnFechaChanged(){
         if(!Fecha.getText().matches("[0-9]*")) {
@@ -85,6 +93,9 @@ public class HitoController  {
 
     }
 
+    /**
+     * Guarda el valor previo de la fecha si es válida.
+     */
     @FXML
     protected void OnFechaKeyPress(){
         if(Fecha.getText().matches("[0-9]*")) {
@@ -94,30 +105,64 @@ public class HitoController  {
         }
     }
 
+    /**
+     * Aplica la fecha al hito cuando se confirma el campo.
+     * Valida:
+     * - Formato
+     * - Valor distinto de 0
+     * - Que esté dentro del periodo padre
+     */
+
     @FXML
     protected void  OnActionFecha(){
+        int fch= hito.getFecha();
+        try{
         if(AC.isSelected()){
             hito.setFecha((Integer.parseInt(Fecha.getText()))*(-1));
         }
         else{
             hito.setFecha(Integer.parseInt(Fecha.getText()));
+        }} catch (NumberFormatException e) {
+            hito.setFecha(1);
+            Fecha.setText("1");
         }
         if(hito.getFecha()==0){
             hito.setFecha(1);
             Fecha.setText("1");
         }
-        Dato.setText(Dato.getText()+" "+hito.getFecha());
+        if(hito.getDependencia()!=null){
+            boolean fallo=false;
+            if(hito.getFecha()<hito.getDependencia().getFecha1()||hito.getFecha()>hito.getDependencia().getFecha2()){
+                hito.setFecha(fch);
+                Fecha.setText(""+fch);
+                fallo=true;
+            }
+
+            if(fallo){
+                mainViewController.toast("El hito ha de ser contenido por padre");
+            }
+        }
         Dato.requestFocus();
-        Pestaña.setText("Hito: "+NomHit.getText()+" "+Math.abs(hito.getFecha())+" ");
-        mainViewController.setDurFchMinFchMax(1.7976931348623157e+308,hito.getFecha(),hito.getFecha());
+        String fecha = ""+hito.getFecha();
+        if(hito.getFecha()<0){
+            fecha=Math.abs(hito.getFecha())+" A.C";
+        }
+        Pestaña.setText("Hito: "+NomHit.getText()+" "+fecha+" ");
+        mainViewController.setDurFchMinFchMax(1,hito.getFecha(),hito.getFecha());
     }
 
+    /**
+     * Cambia el signo de la fecha al marcar A.C.
+     */
     @FXML
     protected void OnActionAC(){
         hito.setFecha(hito.getFecha()*(-1));
         Dato.setText(Dato.getText()+" "+hito.getFecha());
     }
 
+    /**
+     * Actualiza el título del hito.
+     */
     @FXML
     protected void  OnActionTitulo(){
 
@@ -125,6 +170,9 @@ public class HitoController  {
         Pestaña.setText("Hito: "+hito.getTitulo()+" "+Fecha.getText()+" ");
     }
 
+    /**
+     * Carga las dependencias posibles según la fecha del hito.
+     */
     @FXML
     public void setDependecias(){
         ArrayList nombres = new ArrayList<>();
@@ -138,6 +186,9 @@ public class HitoController  {
 
     }
 
+    /**
+     * Asigna o elimina la dependencia seleccionada.
+     */
     @FXML
     protected void onActionComboBox() {
         for (Periodo periodoDep : periodos) {
@@ -171,6 +222,9 @@ public class HitoController  {
         }
     }
 
+    /**
+     * Elimina el hito tras confirmación del usuario.
+     */
     @FXML
     public void eliminar(){
         Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
@@ -188,25 +242,34 @@ public class HitoController  {
         }
     }
 
+    /**
+     * Actualiza el título del hito.
+     */
     @FXML
     protected void setTitulo(){
         hito.setTitulo(NomHit.getText());
     }
 
+    /**
+     * Actualiza los datos del hito.
+     */
     @FXML
     protected void setDato(){
         hito.setDatos(Dato.getText());
-        Pestaña.setText("Hito: "+hito.getTitulo()+" "+Fecha.getText()+" ");
     }
 
     public void setComboBox(String txt){
         Dependencias.setValue(txt);
     }
 
+    /** Bloquea o desbloquea el checkbox A.C */
     public void bloqAC(Boolean estado){
         AC.setDisable(estado);
     }
 
+    /**
+     * Permite seleccionar una imagen para el hito.
+     */
     @FXML
     protected void añadirImagen(){
         FileChooser fileChooser = new FileChooser();
@@ -224,5 +287,10 @@ public class HitoController  {
         if(Url!=null){
             hito.setImagen(Url.getAbsolutePath());
         }
+    }
+
+    /** Fija la fecha inicial a 1 */
+    public void setFechaIni() {
+        Fecha.setText("1");
     }
 }

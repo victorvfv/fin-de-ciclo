@@ -24,15 +24,15 @@
                         <AnchorPane fx:id="jaulaLineas" prefHeight="0.0" prefWidth="0.0" />
                      </content>
                   </ScrollPane>
-                  <ScrollPane fx:id="ScrollData" prefHeight="350.0" prefWidth="449.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <ScrollPane fx:id="scrollData" prefHeight="350.0" prefWidth="449.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <content>
-                        <VBox fx:id="VboxData" prefHeight="316.0" prefWidth="364.0" />
+                        <VBox fx:id="vboxData" prefHeight="316.0" prefWidth="364.0" />
                      </content>
                   </ScrollPane>
                </children></AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="350.0" prefWidth="294.0">
                <children>
-                  <HTMLEditor fx:id="HTMLEditor" htmlText="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body contenteditable=&quot;true&quot;&gt;&lt;/body&gt;&lt;/html&gt;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <HTMLEditor fx:id="htmlEditor" htmlText="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body contenteditable=&quot;true&quot;&gt;&lt;/body&gt;&lt;/html&gt;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
 
                </children>
             </AnchorPane>
@@ -40,7 +40,7 @@
       </SplitPane>
       <ToolBar prefHeight="40.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
-            <TextField fx:id="NomProyecto" onKeyTyped="#onKeyPressNomProyecto" promptText="Nombre proyecto">
+            <TextField fx:id="nomProyecto" onKeyTyped="#onKeyPressNomProyecto" promptText="Nombre proyecto">
                <font>
                   <Font size="14.0" />
                </font></TextField>

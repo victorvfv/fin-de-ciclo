@@ -61,6 +61,15 @@ public class ProyectosNubeBtnController {
         return proyecto;
     }
 
+    /**
+     * Asigna el proyecto al botón y configura
+     * el estado visual de los botones según el modo.
+     *
+     * - Establece el nombre del proyecto
+     * - Activa o desactiva botones según el modo eliminación
+     *
+     * @param proyecto proyecto asociado
+     */
     public void setProyecto(Proyecto proyecto) {
         this.proyecto = proyecto;
         btnProyecto.setText(proyecto.getNombre());
@@ -68,6 +77,13 @@ public class ProyectosNubeBtnController {
         btnDel.setDisable(!eliminar);
     }
 
+    /**
+     * Acción asociada al botón principal del proyecto.
+     *
+     * - Si está en modo carga, carga el proyecto y
+     *   rellena la vista principal.
+     * - Si no, añade el proyecto al sistema.
+     */
     @FXML
     public void cargarProyecto(){
         if(cargar){
@@ -78,6 +94,13 @@ public class ProyectosNubeBtnController {
         }
     }
 
+    /**
+     * Acción asociada al botón de eliminación.
+     *
+     * Elimina el proyecto de la nube y, si la operación
+     * es correcta, elimina también su nodo visual.
+     * En caso contrario, muestra un mensaje de error.
+     */
     @FXML
     public void eliminarProyecto(){
         if (ctr.eliminarProyecto(proyecto.getId())) {

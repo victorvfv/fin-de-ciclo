@@ -27,6 +27,7 @@ public class ProyectosNubeController {
         return eliminar;
     }
 
+
     public void setEliminar(boolean eliminar) {
         this.eliminar = eliminar;
     }
@@ -57,6 +58,14 @@ public class ProyectosNubeController {
         this.proyectos = proyectos;
     }
 
+    /**
+     * Genera dinámicamente los botones de los proyectos
+     * obtenidos desde la nube.
+     *
+     * Cada proyecto se representa con un nodo FXML
+     * que permite cargarlo, añadirlo o eliminarlo
+     * según el modo configurado.
+     */
     public void proyectosBtn()  {
         for(Proyecto proyecto:proyectos.values()){
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/app_lin_tem/Componentes/ProyectosNubeBtn.fxml"));
@@ -78,6 +87,12 @@ public class ProyectosNubeController {
         }
     }
 
+    /**
+     * Elimina un nodo visual del contenedor de proyectos.
+     * Se utiliza tras eliminar un proyecto de la nube.
+     *
+     * @param node nodo a eliminar de la vista
+     */
     public void delNodo(Node node){
         VboxBtn.getChildren().remove(node);
     }

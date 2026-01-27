@@ -28,12 +28,4 @@ public class HitoUI extends TitledPane {
         }
 
     }
-
-
-    @FXML
-    protected void onNombreCambiado(){
-        NomHit.setText("cambiooo");
-    }
-
-
 }
